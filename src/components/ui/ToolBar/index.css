@@ -1,0 +1,13 @@
+.tool-bar {
+  display: flex;
+  background: rgb(230, 230, 230);
+  grid-column: -4/-1;
+}
+
+@media  (max-width:700px) {
+    .tool-bar {
+        grid-row: 3/3;
+        grid-column: 1/-1;
+    }
+
+}

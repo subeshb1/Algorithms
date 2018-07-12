@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { createComponent, createPortal } from "./components/utils";
+import Sorting from "./Container/Sorting";
 
 const Header = createPortal(document.getElementById("header"), "Header");
 const Footer = createPortal(document.getElementById("footer"), "Footer");
@@ -13,6 +14,7 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
+        {/* Portal */}
         <Header>
           <Navbar>
             <NavItem className="header item">
@@ -27,9 +29,9 @@ class App extends Component {
             <NavItem as="a">Login</NavItem>
           </Navbar>
         </Header>
-        <Main>
-          <div>Hello</div>
-        </Main>
+        {/* Renders in #Root */}
+          <Sorting />
+        {/* Portal */}
         <Footer />
       </React.Fragment>
     );

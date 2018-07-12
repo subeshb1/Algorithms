@@ -17,7 +17,7 @@ export const createComponent = (
 
   return Component;
 };
-
+//Setting the Display Name
 export const getDisplayName = Component => {
   return Component.displayName || Component.name || String(Component);
 };
