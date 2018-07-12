@@ -1,5 +1,4 @@
-
-class MergeSort {
+ class MergeSort {
   constructor(list) {
     this._list = new List([...list]);
   }
@@ -27,13 +26,13 @@ class MergeSort {
     let L = [];
     let R = [];
 
-    this.action.push({
-      type:"LIST_SET_PIVOT",
-          payload:q
-    },{
-      type:"LIST_BOUNDARY",
-      payload:[p,r]
-    })
+    // this.action.push({
+    //   type:"LIST_SET_PIVOT",
+    //       payload:q
+    // },{
+    //   type:"LIST_BOUNDARY",
+    //   payload:[p,r]
+    // })
     for (let i = 0; i < n1; i++) {
       L[i] = {
         item: this._list.at(p + i),
@@ -58,7 +57,8 @@ class MergeSort {
           type:"LIST_STORE",
           payload:{
             i:k,
-            val:L[i].item
+            val:L[i].item,
+            boundary:[p,r]
           }
         })
         this._list.storeAt(k, L[i].item);
@@ -68,19 +68,20 @@ class MergeSort {
           type:"LIST_STORE",
           payload:{
             i:k,
-            val:R[j].item
+            val:R[j].item,
+            boundary:[p,r]
           }
         })
         this._list.storeAt(k, R[j].item);
         j++;
       }
     }
-    this.action.push({
-      type:"LIST_SET_PIVOT",
-          payload:-1
-    },{
-      type:"LIST_BOUNDARY",
-      payload:[-1,-1]
-    })
+  //   this.action.push({
+  //     type:"LIST_SET_PIVOT",
+  //         payload:-1
+  //   },{
+  //     type:"LIST_BOUNDARY",
+  //     payload:[-1,-1]
+  //   })
   }
 }

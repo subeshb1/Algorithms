@@ -9,6 +9,5 @@ importScripts(
 
 self.onmessage = e => {
   let a = new MergeSort(e.data);
-  console.log(a.sort(a => a.height));
   self.postMessage(a.sort(a => a.height));
 };
