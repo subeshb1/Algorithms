@@ -3,8 +3,9 @@
   grid-column: 1 / -1;
   background-color: blue;
   color: black;
-  background: rgb(230, 230, 230);
+  background: rgb(248, 249, 250);
  overflow: auto; 
+ border-radius: 10px;
 }
 
 .menu > .item {
@@ -14,6 +15,9 @@
   padding: 10px;
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
+}
+.menu > .item.active {
+  border-bottom-color: red;
 }
 
 .menu > .item:hover {

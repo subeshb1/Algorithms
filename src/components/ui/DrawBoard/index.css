@@ -3,11 +3,13 @@
   background-color: white;
   grid-column: 1/-4;
   grid-row: 2/2;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .drawboard > svg {
   width: 100%;
-  height: auto;
+  max-height: 90vh;
 
 }
 @media (max-width: 700px) {

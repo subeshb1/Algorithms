@@ -66,9 +66,8 @@ body {
 }
 /* MAIN */
 #root {
-  background: url("logo.svg");
-  background-size: 100%;
-  background-repeat: no-repeat;
+ 
+  background-color: rgb(231, 231, 231);
   /* height: 100vh; */
 }
 
@@ -76,4 +75,10 @@ body {
 #footer {
   height: 20vh;
   background: var(--theme-background);
+}
+
+
+a{
+  text-decoration: none;
+  color: inherit;
 }

@@ -7,9 +7,18 @@ export const createComponent = (
   defaultProps = {},
   name = ""
 ) => {
-  function Component({ as, ...props }) {
-    RenderAs = as || RenderAs;
-    return <RenderAs {...defaultProps} {...props} />;
+  const { className, ...other } = defaultProps;
+  function Component({ as = RenderAs, extra, ...props }) {
+    return React.createElement(as, {
+      ...{
+        className: className
+          ? // TO add extra class
+            className + (extra ? " " + extra : " ")
+          : undefined
+      },
+      ...other,
+      ...props
+    });
   }
 
   // Functional HOC
