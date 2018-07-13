@@ -3,19 +3,71 @@ import { NavLink } from "react-router-dom";
 import "./index.css";
 import { DrawBoard, ToolBar, MenuBar } from "../../components/ui";
 
+const getMaxValue = pathname => {
+  switch (pathname.slice(1)) {
+    case "bubble-sort":
+      return 1000;
+    case "selection-sort":
+      return 1000;
+    case "quick-sort":
+      return 3000;
+    case "merge-sort":
+      return 10000;
+    case "heap-sort":
+      return 3000;
+  }
+};
+const getAlgoFromPath = pathname => {
+  const algo = pathname.slice(1);
+  if (
+    algo !== "bubble-sort" &&
+    algo !== "selection-sort" &&
+    algo !== "quick-sort" &&
+    algo !== "merge-sort" &&
+    algo !== "heap-sort"
+  )
+    return "bubble-sort";
+  return algo;
+};
+
 class Sorting extends React.Component {
-  state = {
-    list: [],
-    size: 10,
-    mode: 3,
-    listLoading: true,
-    value: 10,
-    pivot: -1,
-    listProcessing: false,
-    sorting: false,
-    step: 1,
-    interval: 10,
-    boundary: []
+  constructor(props) {
+    super(props);
+    const {
+      location: { pathname }
+    } = this.props;
+
+    this.state = {
+      list: [],
+      size: 100,
+      mode: 3,
+      listLoading: true,
+      value: 10,
+      pivot: -1,
+      listProcessing: false,
+      sorting: false,
+      step: 1,
+      interval: 10,
+      boundary: [],
+      swap: [],
+      pathname,
+      finished: false
+    };
+  }
+
+  shouldComponentUpdate = ({ location: { pathname } }) => {
+    if (this.state.pathname !== pathname)
+      this.setState({
+        listLoading: false,
+        pivot: -1,
+        listProcessing: false,
+        sorting: false,
+        boundary: [],
+        swap: [],
+        pathname,
+        finished: false
+      });
+    return true;
   };
   componentDidMount = () => {
     const { size, mode } = this.state;
@@ -28,12 +80,16 @@ class Sorting extends React.Component {
       this.setState({ sorting: true, listProcessing: false }, () =>
         this.animate(e.data)
       );
-    this.setState({ listProcessing: true }, () => {
-      myWorker.postMessage(this.state.list);
+
+    this.setState({ listProcessing: true, finished: false }, () => {
+      myWorker.postMessage([
+        getAlgoFromPath(this.state.pathname),
+        this.state.list
+      ]);
     });
   };
   generateList = (size, mode) => {
-    this.setState({ listLoading: true }, () => {
+    this.setState({ listLoading: true, finished: false }, () => {
       const myWorker = new Worker("/algo/generate.js");
       myWorker.postMessage([size, mode]);
       myWorker.onmessage = e =>
@@ -44,16 +100,30 @@ class Sorting extends React.Component {
     let list = [...this.state.list];
     let i = 0;
     for (let item of actions) {
-      list[item.payload.i] = item.payload.val;
+      switch (item.type) {
+        case "LIST_STORE":
+          list[item.payload.i] = item.payload.val;
+          break;
+        case "LIST_SWAP":
+          const temp = list[item.payload.pos[0]];
+          list[item.payload.pos[0]] = list[item.payload.pos[1]];
+          list[item.payload.pos[1]] = temp;
+          break;
+        default:
+          break;
+      }
+
       if (!this.state.sorting) return;
-      if (i % this.state.step == 0 || !this.state.step) {
+      if (i % this.state.step === 0 || !this.state.step) {
         await new Promise(resolve =>
           setTimeout(() => {
+            if (!this.state.sorting) return;
             this.setState(
               {
                 list: [...list],
-                pivot: item.payload.i,
-                boundary: item.payload.boundary,
+                pivot: item.payload.pivot,
+                boundary: item.payload.boundary || [],
+                swap: item.payload.pos || []
               },
               () => resolve()
             );
@@ -64,23 +134,44 @@ class Sorting extends React.Component {
 
       i++;
     }
-    this.setState({ list, pivot: -1, sorting: false,boundary:[] });
+    this.setState({
+      list,
+      pivot: -1,
+      sorting: false,
+      boundary: [],
+      swap: [],
+      finished: true
+    });
+  };
+
+  updateSize = (mode = 1) => {
+    if (
+      (!this.state.listLoading && this.state.value !== this.state.size) ||
+      mode === 1
+    )
+      this.generateList(
+        Math.min(this.state.value, getMaxValue(this.state.pathname)),
+        this.state.mode
+      );
   };
   render() {
-    const {
-      location: { pathname }
-    } = this.props;
     const {
       list,
       size,
       listLoading,
       sorting,
+      swap,
       listProcessing,
       pivot,
-      boundary
+      boundary,
+      pathname,
+      finished
     } = this.state;
 
-    const algo = pathname.slice(1);
+    const algo = getAlgoFromPath(pathname)
+      .split("-")
+      .map(x => x.toUpperCase())
+      .join(" ");
     return (
       <div className="sorting">
         <MenuBar>
@@ -103,7 +194,7 @@ class Sorting extends React.Component {
         <DrawBoard>
           {listLoading || listProcessing ? (
             <div className="logo">
-              <img src="/logo.svg" />
+              <img src="/logo.svg" alt="" />
             </div>
           ) : (
             ""
@@ -114,14 +205,24 @@ class Sorting extends React.Component {
                 {...x}
                 x={i * 10}
                 width="10"
+                key={i}
                 fill={
-                  pivot === i ? "blue" : boundary.includes(i) ? "red" : "black"
+                  finished
+                    ? "green"
+                    : swap.includes(i)
+                      ? "green"
+                      : pivot === i
+                        ? "blue"
+                        : boundary.includes(i)
+                          ? "red"
+                          : "black"
                 }
               />
             ))}
           </svg>
         </DrawBoard>
         <ToolBar>
+          <h2>{algo}</h2>
           <label>
             Name
             <input
@@ -131,26 +232,26 @@ class Sorting extends React.Component {
               max="10000"
               value={this.state.value}
               onChange={e => {
-                this.setState({ value: e.target.value });
+                this.setState({
+                  value: Math.min(
+                    parseInt(e.target.value, 10),
+                    getMaxValue(pathname)
+                  )
+                });
+              }}
+              onBlur={() => {
+                this.updateSize();
+              }}
+              onKeyDown={e => {
+                if (e.keyCode === 13) this.updateSize(1);
               }}
               disabled={listLoading || listProcessing || sorting}
             />
           </label>
-          <button
-            onClick={() => {
-              if (!listLoading)
-                this.generateList(
-                  Math.min(this.state.value, 10000),
-                  this.state.mode
-                );
-            }}
-            disabled={listLoading || listProcessing || sorting}
-          >
-            Enter
-          </button>
+
           <select
             onChange={e =>
-              this.generateList(this.state.size, parseInt(e.target.value))
+              this.generateList(this.state.size, parseInt(e.target.value, 10))
             }
             disabled={listLoading || listProcessing || sorting}
           >

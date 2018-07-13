@@ -1,7 +1,6 @@
- class QuickSort {
+class QuickSort {
   constructor(list) {
     this._list = new List([...list]);
-   
   }
 
   sort(compare) {
@@ -10,7 +9,6 @@
     this.action = [];
 
     this.quickSort(0, length - 1);
-    this.action.push({type: "LIST_COMPLETE", payload: 1});
     return this.action;
   }
 
@@ -25,23 +23,32 @@
   partition(p, r) {
     let x = this._list.at(r);
     let i = p - 1;
-    this.action.push({type: "LIST_BOUNDARY", payload: [p, r]});
-    this.action.push({type: "LIST_SET_PIVOT", payload: -1});
     for (let j = p; j < r; j++) {
       if (this.compare(x, this._list.at(j))) {
         i++;
 
         this._list.swap(i, j);
-        this.action.push({type: "LIST_SWAP", payload: [i, j]})
+        this.action.push({
+          type: "LIST_SWAP",
+          payload: {
+            pos: [i, j],
+            boundary: [p, r],
+            pivot: i
+          }
+        });
       }
     }
     i++;
-    this.action.push({type: "LIST_SET_PIVOT", payload: i});
-    this.action.push({type: "LIST_SWAP", payload: [i, r]});
+    this.action.push({
+      type: "LIST_SWAP",
+      payload: {
+        pos: [i, r],
+        boundary: [p, r],
+        pivot: i
+      }
+    });
     this._list.swap(i, r);
 
-
-    console.log(i, r);
     return i;
   }
 }
