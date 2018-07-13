@@ -322,7 +322,7 @@ class Sorting extends React.Component {
             </button>
             <button
               onClick={() => this.stop()}
-              disabled={!sorting}
+              disabled={!sorting && !listProcessing}
               className="red"
             >
               Stop

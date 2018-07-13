@@ -69,7 +69,7 @@ body {
 
 /* FOOTER */
 #footer {
-  height: 20vh;
+  min-height: 20vh;
   background: var(--theme-background);
   color: white;
   display: flex;
