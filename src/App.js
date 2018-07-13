@@ -25,7 +25,6 @@ class App extends Component {
               <NavItem className="header item">
                 <img src="logo.svg" alt="" />
                 <a>Algorithms</a>
-                <button>I</button>
               </NavItem>
               <NavItem as="a">Home</NavItem>
               <NavItem as="a">About</NavItem>
@@ -35,9 +34,9 @@ class App extends Component {
             </Navbar>
           </Header>
           {/* Renders in #Root */}
-          <Route  path="/" component={Sorting} />
+          <Route path="/" component={Sorting} />
           {/* Portal */}
-          <Footer />
+          <Footer>&copy;Copyright Subesh Bhandari</Footer>
         </React.Fragment>
       </Router>
     );

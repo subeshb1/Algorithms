@@ -250,7 +250,7 @@ class Sorting extends React.Component {
         <ToolBar>
           <h2>{algo}</h2>
           <label>
-            Name
+            No of Items
             <input
               type="number"
               step="1"
@@ -274,18 +274,20 @@ class Sorting extends React.Component {
               disabled={listLoading || listProcessing || sorting}
             />
           </label>
-
-          <select
-            onChange={e =>
-              this.generateList(this.state.size, parseInt(e.target.value, 10))
-            }
-            disabled={listLoading || listProcessing || sorting}
-          >
-            <option value="3">Random</option>
-            <option value="1">Ascending</option>
-            <option value="2">Descending</option>
-          </select>
-
+          <label>
+            {" "}
+            Generate Items
+            <select
+              onChange={e =>
+                this.generateList(this.state.size, parseInt(e.target.value, 10))
+              }
+              disabled={listLoading || listProcessing || sorting}
+            >
+              <option value="3">Random</option>
+              <option value="1">Ascending</option>
+              <option value="2">Descending</option>
+            </select>
+          </label>
           <label>
             Step<input
               type="number"
@@ -310,15 +312,22 @@ class Sorting extends React.Component {
               max="10000"
             />
           </label>
-          <button
-            onClick={this.sort}
-            disabled={listLoading || listProcessing || sorting}
-          >
-            Sort
-          </button>
-          <button onClick={() => this.stop()} disabled={!sorting}>
-            Stop
-          </button>
+          <div className="btn-group">
+            <button
+              onClick={this.sort}
+              disabled={listLoading || listProcessing || sorting}
+              className="green"
+            >
+              Sort
+            </button>
+            <button
+              onClick={() => this.stop()}
+              disabled={!sorting}
+              className="red"
+            >
+              Stop
+            </button>
+          </div>
         </ToolBar>
       </div>
     );

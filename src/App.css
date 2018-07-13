@@ -55,11 +55,7 @@ body {
   .navbar .header.item {
     display: flex;
   }
-  .navbar > .header.item img,
-  .navbar > .header.item button {
-    display: unset;
-    margin: 0 0 0 auto;
-  }
+  
   .navbar:hover .item {
     display: flex;
   }
@@ -75,6 +71,11 @@ body {
 #footer {
   height: 20vh;
   background: var(--theme-background);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
 }
 
 
