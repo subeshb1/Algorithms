@@ -5,16 +5,16 @@ import { DrawBoard, ToolBar, MenuBar } from "../../components/ui";
 
 const getMaxValue = pathname => {
   switch (pathname.slice(1)) {
-    case "bubble-sort":
-      return 1000;
     case "selection-sort":
       return 1000;
     case "quick-sort":
       return 3000;
     case "merge-sort":
-      return 10000;
+      return 5000;
     case "heap-sort":
       return 3000;
+    default:
+      return 1000;
   }
 };
 const getAlgoFromPath = pathname => {
@@ -42,7 +42,7 @@ class Sorting extends React.Component {
       size: 100,
       mode: 3,
       listLoading: true,
-      value: 10,
+      value: 100,
       pivot: -1,
       listProcessing: false,
       sorting: false,
@@ -53,20 +53,40 @@ class Sorting extends React.Component {
       pathname,
       finished: false
     };
+    this.worker = undefined;
   }
 
+  createWorker = name => {
+    if (this.worker) this.worker.terminate();
+    this.worker = new Worker(name);
+  };
+  terminateWorker = () => {
+    if (this.worker) this.worker.terminate();
+    this.worker = undefined;
+  };
+
+  stop = (extra = {}) => {
+    this.terminateWorker();
+    this.reset(extra);
+  };
+
+  reset = (extra = {}) => {
+    this.setState({
+      listLoading: false,
+      pivot: -1,
+      listProcessing: false,
+      sorting: false,
+      boundary: [],
+      swap: [],
+      finished: false,
+      ...extra
+    });
+  };
+
   shouldComponentUpdate = ({ location: { pathname } }) => {
-    if (this.state.pathname !== pathname)
-      this.setState({
-        listLoading: false,
-        pivot: -1,
-        listProcessing: false,
-        sorting: false,
-        boundary: [],
-        swap: [],
-        pathname,
-        finished: false
-      });
+    if (this.state.pathname !== pathname) {
+      this.stop({ pathname });
+    }
     return true;
   };
   componentDidMount = () => {
@@ -74,28 +94,32 @@ class Sorting extends React.Component {
     this.generateList(size, mode);
   };
   sort = () => {
-    const myWorker = new Worker("/algo/worker.js");
-
-    myWorker.onmessage = e =>
+    this.createWorker("/workers/algo.js");
+    this.worker.onmessage = e => {
+      this.terminateWorker();
       this.setState({ sorting: true, listProcessing: false }, () =>
         this.animate(e.data)
       );
-
+    };
     this.setState({ listProcessing: true, finished: false }, () => {
-      myWorker.postMessage([
+      this.worker.postMessage([
         getAlgoFromPath(this.state.pathname),
         this.state.list
       ]);
     });
   };
+
   generateList = (size, mode) => {
     this.setState({ listLoading: true, finished: false }, () => {
-      const myWorker = new Worker("/algo/generate.js");
-      myWorker.postMessage([size, mode]);
-      myWorker.onmessage = e =>
+      this.createWorker("/workers/generate.js");
+      this.worker.postMessage([size, mode]);
+      this.worker.onmessage = e => {
+        this.terminateWorker();
         this.setState({ list: e.data, listLoading: false, size, mode });
+      };
     });
   };
+
   animate = async actions => {
     let list = [...this.state.list];
     let i = 0;
@@ -150,10 +174,11 @@ class Sorting extends React.Component {
       mode === 1
     )
       this.generateList(
-        Math.min(this.state.value, getMaxValue(this.state.pathname)),
+        Math.min(this.state.value || 1, getMaxValue(this.state.pathname)),
         this.state.mode
       );
   };
+
   render() {
     const {
       list,
@@ -217,6 +242,7 @@ class Sorting extends React.Component {
                           ? "red"
                           : "black"
                 }
+                // stroke="black"
               />
             ))}
           </svg>
@@ -234,7 +260,7 @@ class Sorting extends React.Component {
               onChange={e => {
                 this.setState({
                   value: Math.min(
-                    parseInt(e.target.value, 10),
+                    parseInt(e.target.value, 10) || "",
                     getMaxValue(pathname)
                   )
                 });
@@ -289,6 +315,9 @@ class Sorting extends React.Component {
             disabled={listLoading || listProcessing || sorting}
           >
             Sort
+          </button>
+          <button onClick={() => this.stop()} disabled={!sorting}>
+            Stop
           </button>
         </ToolBar>
       </div>
