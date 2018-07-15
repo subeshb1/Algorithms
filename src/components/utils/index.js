@@ -39,3 +39,22 @@ export const createPortal = (node, name = "") => {
   Portal.displayName = `Portal(${getDisplayName(name)})`;
   return Portal;
 };
+
+// Item generator class
+//Does nothing more than building nodes for provided items array
+// Takes two parameter Parent Node and CHild Node // SHould be a react node.
+export const itemGenerator = (parent = "div", child = "div") => {
+  function ItemGenerator({ as = parent, items = [], children, ...props }) {
+    return React.createElement(
+      as,
+      { ...props },
+      children,
+      items.map(({ key, as = child, ...otherProps }, i) =>
+        React.createElement(as, {
+          key: key != undefined ? key : i,
+          ...otherProps
+        })
+      )
+    );
+  }
+};

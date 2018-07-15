@@ -97,8 +97,10 @@ class Sorting extends React.Component {
     this.createWorker("/workers/algo.js");
     this.worker.onmessage = e => {
       this.terminateWorker();
-      this.setState({ sorting: true, listProcessing: false }, () =>
+      this.setState({ sorting: true, listProcessing: false }, () => {
+        console.log(e.data);
         this.animate(e.data)
+      }
       );
     };
     this.setState({ listProcessing: true, finished: false }, () => {
@@ -293,11 +295,11 @@ class Sorting extends React.Component {
               type="number"
               value={this.state.step}
               onChange={e => {
-                this.setState({ step: e.target.value });
+                this.setState({ step: parseInt(e.target.value, 10) || 1 });
               }}
               step="1"
-              min="0"
-              max="10000"
+              min="1"
+              max="1000"
             />
           </label>
           <label>
@@ -305,10 +307,10 @@ class Sorting extends React.Component {
               type="number"
               value={this.state.interval}
               onChange={e => {
-                this.setState({ interval: e.target.value });
+                this.setState({ interval: parseInt(e.target.value, 10) || 1 });
               }}
               step="1"
-              min="0"
+              min="1"
               max="10000"
             />
           </label>

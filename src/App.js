@@ -10,8 +10,6 @@ import Sorting from "./Container/Sorting";
 const Header = createPortal(document.getElementById("header"), "Header");
 const Footer = createPortal(document.getElementById("footer"), "Footer");
 const Navbar = createComponent("nav", { className: "navbar" });
-const Main = createComponent("div", {}, "Main");
-
 const NavItem = createComponent("div", { className: "item" });
 
 class App extends Component {
