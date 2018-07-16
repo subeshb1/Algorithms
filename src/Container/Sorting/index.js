@@ -2,6 +2,17 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import "./index.css";
 import { DrawBoard, ToolBar, MenuBar } from "../../components/ui";
+import { itemGenerator } from "../../components/utils";
+import { changeSize } from "../../actions/sorting";
+import { connect } from "react-redux";
+
+const links = [
+  "/bubble-sort",
+  "/quick-sort",
+  "/selection-sort",
+  "/merge-sort",
+  "/heap-sort"
+];
 
 const getMaxValue = pathname => {
   switch (pathname.slice(1)) {
@@ -28,6 +39,71 @@ const getAlgoFromPath = pathname => {
   )
     return "bubble-sort";
   return algo;
+};
+
+const getName = pathname =>
+  getAlgoFromPath(pathname)
+    .split("-")
+    .map(x => x.toUpperCase())
+    .join(" ");
+
+// Menu Component
+const Menu = itemGenerator("div", NavLink, "Menu");
+
+let menuItems = links.map(item => ({
+  className: "item",
+  children: getName(item),
+  to: item
+}));
+
+const Loader = (
+  <div className="logo">
+    <img src="/logo.svg" alt="" />
+  </div>
+);
+
+const Draw = <div className="drawboard" />;
+const DrawB = ({
+  listLoading,
+  listProcessing,
+  size,
+  finished,
+  swap,
+  pivot,
+  boundary,
+  list
+}) => {
+  return (
+    <div className="drawboard">
+      {(listLoading || listProcessing) && (
+        <div className="logo">
+          <img src="/logo.svg" alt="" />
+        </div>
+      )}
+      <svg preserveAspectRatio="none" viewBox={`0 0 ${size}0 ${size}0`}>
+        {list.map((x, i) => (
+          <rect
+            {...x}
+            x={i * 10}
+            width="10"
+            key={i}
+            fill={
+              finished
+                ? "green"
+                : swap.includes(i)
+                  ? "green"
+                  : pivot === i
+                    ? "blue"
+                    : boundary.includes(i)
+                      ? "red"
+                      : "black"
+            }
+            // stroke="black"
+          />
+        ))}
+      </svg>
+    </div>
+  );
 };
 
 class Sorting extends React.Component {
@@ -99,9 +175,8 @@ class Sorting extends React.Component {
       this.terminateWorker();
       this.setState({ sorting: true, listProcessing: false }, () => {
         console.log(e.data);
-        this.animate(e.data)
-      }
-      );
+        this.animate(e.data);
+      });
     };
     this.setState({ listProcessing: true, finished: false }, () => {
       this.worker.postMessage([
@@ -194,61 +269,27 @@ class Sorting extends React.Component {
       pathname,
       finished
     } = this.state;
-
     const algo = getAlgoFromPath(pathname)
       .split("-")
       .map(x => x.toUpperCase())
       .join(" ");
     return (
       <div className="sorting">
-        <MenuBar>
-          <MenuBar.Item as={NavLink} to="/bubble-sort">
-            Bubble Sort
-          </MenuBar.Item>
-          <MenuBar.Item as={NavLink} to="/quick-sort">
-            Quick Sort
-          </MenuBar.Item>
-          <MenuBar.Item as={NavLink} to="/selection-sort">
-            Selection Sort
-          </MenuBar.Item>
-          <MenuBar.Item as={NavLink} to="/merge-sort">
-            Merge Sort
-          </MenuBar.Item>
-          <MenuBar.Item as={NavLink} to="/heap-sort">
-            Heap Sort
-          </MenuBar.Item>
-        </MenuBar>
-        <DrawBoard>
-          {listLoading || listProcessing ? (
-            <div className="logo">
-              <img src="/logo.svg" alt="" />
-            </div>
-          ) : (
-            ""
-          )}
-          <svg preserveAspectRatio="none" viewBox={`0 0 ${size}0 ${size}0`}>
-            {list.map((x, i) => (
-              <rect
-                {...x}
-                x={i * 10}
-                width="10"
-                key={i}
-                fill={
-                  finished
-                    ? "green"
-                    : swap.includes(i)
-                      ? "green"
-                      : pivot === i
-                        ? "blue"
-                        : boundary.includes(i)
-                          ? "red"
-                          : "black"
-                }
-                // stroke="black"
-              />
-            ))}
-          </svg>
-        </DrawBoard>
+        <Menu items={menuItems} className="menu" />
+
+        <DrawB
+          {...{
+            listLoading,
+            listProcessing,
+            size,
+            finished,
+            swap,
+            pivot,
+            boundary,
+            list
+          }}
+        />
+
         <ToolBar>
           <h2>{algo}</h2>
           <label>
@@ -316,6 +357,7 @@ class Sorting extends React.Component {
           </label>
           <div className="btn-group">
             <button
+              onMouseMove={x => this.props.changeSize(999)}
               onClick={this.sort}
               disabled={listLoading || listProcessing || sorting}
               className="green"
@@ -336,4 +378,15 @@ class Sorting extends React.Component {
   }
 }
 
-export default Sorting;
+const mapStateToProps = state => ({
+  tool: state
+});
+
+const mapDispatchToProps = {
+  changeSize
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sorting);

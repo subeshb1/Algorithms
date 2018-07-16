@@ -15,28 +15,28 @@ const NavItem = createComponent("div", { className: "item" });
 class App extends Component {
   render() {
     return (
-      <Router>
-        <React.Fragment>
-          {/* Portal */}
-          <Header>
-            <Navbar>
-              <NavItem className="header item">
-                <img src="logo.svg" alt="" />
-                <a>Algorithms</a>
-              </NavItem>
-              <NavItem as="a">Home</NavItem>
-              <NavItem as="a">About</NavItem>
-              <NavItem as="a">Contact</NavItem>
-              <NavItem as="a">Profile</NavItem>
-              <NavItem as="a">Login</NavItem>
-            </Navbar>
-          </Header>
-          {/* Renders in #Root */}
-          <Route path="/" component={Sorting} />
-          {/* Portal */}
-          <Footer>&copy;Copyright Subesh Bhandari</Footer>
-        </React.Fragment>
-      </Router>
+        <Router>
+          <React.Fragment>
+            {/* Portal */}
+            <Header>
+              <Navbar>
+                <NavItem className="header item">
+                  <img src="logo.svg" alt="" />
+                  <a>Algorithms</a>
+                </NavItem>
+                <NavItem as="a">Home</NavItem>
+                <NavItem as="a">About</NavItem>
+                <NavItem as="a">Contact</NavItem>
+                <NavItem as="a">Profile</NavItem>
+                <NavItem as="a">Login</NavItem>
+              </Navbar>
+            </Header>
+            {/* Renders in #Root */}
+            <Route path="/" component={Sorting} />
+            {/* Portal */}
+            <Footer>&copy;Copyright Subesh Bhandari</Footer>
+          </React.Fragment>
+        </Router>
     );
   }
 }

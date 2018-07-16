@@ -32,7 +32,7 @@
 }
 
 .tool-bar button {
-  --btn-color: 100;
+  --btn-color: 200;
   position: relative;
   padding: 10px 1.5rem;
   color: white;
