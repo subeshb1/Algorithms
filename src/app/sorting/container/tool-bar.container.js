@@ -2,18 +2,29 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getToolsState, getDrawBoardState } from "../reducers";
 import { tools_action, draw_action } from "../actions";
-
+import { withRouter } from "react-router-dom";
 class ToolBarC extends Component {
   componentDidMount() {
     this.props.generateList();
+  }
+  componentDidUpdate({algo}) {
+    if(algo !== this.props.algo) {
+      this.props.cancel();
+    }
   }
   render() {
     const { props } = this;
     const { size, mode, step, interval } = props.tool;
     const { sorting, loading } = props.draw;
+    const {algo} = props;
     return (
       <div className="tool-bar">
-        <h2>Hello</h2>
+        <h2>
+          {(algo)
+            .split("-")
+            .map(x => x.toUpperCase())
+            .join(" ")}
+        </h2>
         <label>
           No of Items
           <input
@@ -40,7 +51,7 @@ class ToolBarC extends Component {
         </label>
         <button
           style={{ alignSelf: "flex-start", margin: "10px 0" }}
-          onClick={this.props.generateList}
+          onClick={props.generateList}
           disabled={loading || sorting}
         >
           {" "}
@@ -60,10 +71,18 @@ class ToolBarC extends Component {
           />
         </label>
         <div className="btn-group">
-          <button className="green" disabled={loading || sorting}>
+          <button
+            className="green"
+            disabled={loading || sorting}
+            onClick={() => props.processList(props.algo)}
+          >
             Sort
           </button>
-          <button className="red" disabled={!sorting && !loading}>
+          <button
+            className="red"
+            disabled={!sorting && !loading}
+            onClick={props.cancel}
+          >
             Stop
           </button>
         </div>
@@ -77,7 +96,9 @@ const mapStateToProps = state => ({
   draw: getDrawBoardState(state)
 });
 
-export default connect(
-  mapStateToProps,
-  { ...tools_action, ...draw_action }
-)(ToolBarC);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { ...tools_action, ...draw_action }
+  )(ToolBarC)
+);

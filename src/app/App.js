@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route } from "react-router-dom";
+import { Route,NavLink } from "react-router-dom";
 import "./App.css";
 import { createComponent, createPortal } from "../lib";
 
@@ -22,7 +22,7 @@ class App extends Component {
               <a>Algorithms</a>
             </NavItem>
             <NavItem as="a">Home</NavItem>
-            <NavItem as="a">About</NavItem>
+            <NavItem as={NavLink} to="/sorting">Sorting</NavItem>
             <NavItem as="a">Contact</NavItem>
             <NavItem as="a">Profile</NavItem>
             <NavItem as="a">Login</NavItem>

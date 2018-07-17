@@ -8,7 +8,6 @@ const DrawBoard = props => {
     list,
     loading
   } = props.draw;
-  console.log(props);
   return (
     <div className="drawboard">
       {loading && (

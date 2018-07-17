@@ -1,4 +1,4 @@
-const extractData = e => parseInt(e.target.value);
+const extractData = (e,m) => Math.min(parseInt(e.target.value), m?10000:1000) || "";
 
 const toolBarReducer = (
   state = {
@@ -15,7 +15,7 @@ const toolBarReducer = (
     case "TOOL_MODE":
       return { ...state, mode: extractData(action.payload) };
     case "TOOL_STEP":
-      return { ...state, step: extractData(action.payload) };
+      return { ...state, step: extractData(action.payload,1) };
     case "TOOL_INTERVAL":
       return { ...state, interval: extractData(action.payload) };
     default:

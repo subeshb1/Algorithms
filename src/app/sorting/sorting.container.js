@@ -14,20 +14,6 @@ const links = [
   "/heap-sort"
 ];
 
-const getMaxValue = pathname => {
-  switch (pathname.slice(1)) {
-    case "selection-sort":
-      return 1000;
-    case "quick-sort":
-      return 3000;
-    case "merge-sort":
-      return 5000;
-    case "heap-sort":
-      return 3000;
-    default:
-      return 1000;
-  }
-};
 const getAlgoFromPath = pathname => {
   const algo = pathname.slice(1);
   if (
@@ -54,18 +40,14 @@ let menuItems = links.map(item => ({
   to: "/sorting" + item
 }));
 
-class Sorting extends Component {
-  render() {
-    console.log("object");
-    return (
-      <div className="sorting">
-        <Menu className="menu" items={menuItems} />
-        <ToolBar />
-        <DrawBoard />
-      </div>
-    );
-  }
-}
+const Sorting = ({ match: { path }, location: { pathname } }) => {
+  return (
+    <div className="sorting">
+      <Menu className="menu" items={menuItems} />
+      <DrawBoard />
+      <ToolBar algo={getAlgoFromPath(pathname.replace(path,""))} />
+    </div>
+  );
+};
 
-const mapStateToProps = state => ({});
-export default connect(mapStateToProps)(Sorting);
+export default Sorting;
