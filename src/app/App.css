@@ -30,6 +30,9 @@ body {
 .navbar > .item:hover {
   border-bottom-color: var(--theme-hover-bg);
 }
+.navbar > .item.active {
+  border-bottom-color: var(--theme-hover-bg);
+}
 .navbar > .header.item {
   font-weight: 900;
   border: 4px solid transparent;

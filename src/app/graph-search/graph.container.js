@@ -1,28 +1,19 @@
 import React from "react";
 import ToolBar from "./container/tool-bar.container";
-import "./css/index.css";
-
-import Menu from "./components/menu";
+import '../css/index.css';
+import Menu from "../components/menu";
 import DrawBoard from "./container/draw-board.container";
 
-const links = [
-  "/bubble-sort",
-  "/quick-sort",
-  "/selection-sort",
-  "/merge-sort",
-  "/heap-sort"
-];
+const links = ["/bfs", "/dfs", "/a-star", "/gbs"];
 
 const getAlgoFromPath = pathname => {
   const algo = pathname.slice(1);
   if (
-    algo !== "bubble-sort" &&
-    algo !== "selection-sort" &&
-    algo !== "quick-sort" &&
-    algo !== "merge-sort" &&
-    algo !== "heap-sort"
+    algo !== "dfs" &&
+    algo !== "a-star" &&
+    algo !== "gbs" 
   )
-    return "bubble-sort";
+    return "bfs";
   return algo;
 };
 
@@ -36,7 +27,7 @@ const getName = pathname =>
 let menuItems = links.map(item => ({
   className: "item",
   children: getName(item),
-  to: "/sorting" + item
+  to: "/graph-search" + item
 }));
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
@@ -44,7 +35,7 @@ const Sorting = ({ match: { path }, location: { pathname } }) => {
     <div className="sorting">
       <Menu className="menu" items={menuItems} />
       <DrawBoard />
-      <ToolBar algo={getAlgoFromPath(pathname.replace(path,""))} />
+      <ToolBar algo={getAlgoFromPath(pathname.replace(path, ""))} />
     </div>
   );
 };

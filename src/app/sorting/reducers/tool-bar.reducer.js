@@ -1,4 +1,4 @@
-const extractData = (e,m) => Math.min(parseInt(e.target.value), m?10000:1000) || "";
+const extractData = (e,m) => Math.min(parseInt(e.target.value,10), m?10000:1000) || "";
 
 const toolBarReducer = (
   state = {
@@ -26,5 +26,5 @@ const toolBarReducer = (
 export default toolBarReducer;
 
 export const getToolsState = state => {
-  return state.tool;
+  return state.sorting.tool;
 };

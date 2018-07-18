@@ -36,36 +36,36 @@ const drawReducer = (
 };
 const isLoading = (state = false, action) => {
   switch (action.type) {
-    case "LIST_GENERATE":
-    case "LIST_PROCESS":
+    case "GRAPH_LIST_GENERATE":
+    case "GRAPH_LIST_PROCESS":
       return true;
-    case "LIST_GENERATED":
-    case "LIST_PROCESSED":
+    case "GRAPH_LIST_GENERATED":
+    case "GRAPH_LIST_PROCESSED":
       return false;
-    case "CANCELLED":
+    case "GRAPH_CANCELLED":
       return false;
     default:
       return state;
   }
 };
-const isSorting = (state = false, action) => {
+const isSearching = (state = false, action) => {
   switch (action.type) {
-    case "LIST_PROCESSED":
+    case "GRAPH_LIST_PROCESSED":
       return true;
-    case "CANCELLED":
-    case "FINISHED":
+    case "GRAPH_CANCELLED":
+    case "GRAPH_FINISHED":
       return false;
     default:
       return state;
   }
 };
-const listReducer = (state = [], action) => {
+const listReducer = (state = { graph: [], row: 0, col: 0 }, action) => {
   switch (action.type) {
-    case "LIST_GENERATED":
-      // case "LIST_ACTION":
+    case "GRAPH_LIST_GENERATED":
+    case "GRAPH_LIST_ACTION":
       return action.payload;
-    case "DRAW_CLEAR":
-      return [];
+    case "GRAPH_CLEAR":
+      return { graph: [], row: 0, col: 0 };
     default:
       return state;
   }
@@ -73,12 +73,12 @@ const listReducer = (state = [], action) => {
 
 export const workerReducer = (state = null, action) => {
   switch (action.type) {
-    case "LIST_GENERATE":
-    case "LIST_PROCESS":
+    case "GRAPH_LIST_GENERATE":
+    case "GRAPH_LIST_PROCESS":
       return new Worker(action.payload);
-    case "LIST_GENERATED":
-    case "LIST_PROCESSED":
-    case "CANCELLED":
+    case "GRAPH_LIST_GENERATED":
+    case "GRAPH_LIST_PROCESSED":
+    case "GRAPH_CANCELLED":
       if (state) state.terminate();
       return null;
     default:
@@ -87,13 +87,13 @@ export const workerReducer = (state = null, action) => {
 };
 export default combineReducers({
   loading: isLoading,
-  sorting: isSorting,
+  searching: isSearching,
   state: drawReducer,
   worker: workerReducer,
   list: listReducer
 });
 
-export const getSorting = state => state.sorting;
+export const getGraph = s => s.graph;
 export const getDrawBoardState = state => {
-  return state.sorting.draw;
+  return state.graph.draw;
 };

@@ -51,6 +51,7 @@ export const itemGenerator = (parent = "div", child = "div", name = "") => {
       children,
       items.map(({ key, as = child, ...otherProps }, i) =>
         React.createElement(as, {
+          // eslint-disable-next-line
           key: key != undefined ? key : i,
           ...otherProps
         })

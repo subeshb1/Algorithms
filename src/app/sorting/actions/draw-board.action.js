@@ -1,13 +1,14 @@
+import {getSorting} from '../reducers';
 const sortList = data => async (dispatch, getState) => {
   let i = 0;
   const {
     draw: { list }
-  } = getState();
+  } = getSorting(getState());
   for (let item of data) {
     const {
       tool: { step, interval },
       draw: { sorting }
-    } = getState();
+    } = getSorting(getState());
     if (!sorting) return;
     switch (item.type) {
       case "LIST_STORE":
@@ -27,7 +28,7 @@ const sortList = data => async (dispatch, getState) => {
         setTimeout(() => {
           const {
             draw: { sorting }
-          } = getState();
+          } = getSorting(getState());
           if (!sorting) return;
           dispatch({
             type: "LIST_ACTION",
@@ -51,7 +52,7 @@ export const generateList = () => (dispatch, getState) => {
   const {
     draw: { worker },
     tool: { size, mode }
-  } = getState();
+  } = getSorting(getState());
   worker.onmessage = e => {
     dispatch({
       type: "LIST_GENERATED",
@@ -64,7 +65,7 @@ export const processList = algo => (dispatch, getState) => {
   dispatch({ type: "LIST_PROCESS", payload: "/workers/algo.js" });
   const {
     draw: { worker, list }
-  } = getState();
+  } = getSorting(getState());
   worker.onmessage = e => {
     dispatch({ type: "LIST_PROCESSED" });
     dispatch(sortList(e.data));

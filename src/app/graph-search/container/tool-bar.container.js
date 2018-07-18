@@ -18,47 +18,70 @@ class ToolBarC extends Component {
   }
   render() {
     const { props } = this;
-    const { size, mode, step, interval } = props.tool;
-    const { sorting, loading } = props.draw;
-    const { algo } = props;
+    const {
+      algo,
+      tool: { row, col, step, interval, start, end },
+      draw: { loading, sorting }
+    } = props;
     return (
-      <div className="tool-bar">
+      <div className="tool-bar" key={"#2"}>
         <h2>
           {algo
             .split("-")
             .map(x => x.toUpperCase())
             .join(" ")}
         </h2>
-        <label>
-          No of Items
-          <input
-            type="number"
-            step="1"
-            min="0"
-            max="10000"
-            value={size}
-            onChange={props.changeSize}
-            disabled={loading || sorting}
-          />
-        </label>
-        <label>
-          Items Order
-          <select
-            value={mode}
-            onChange={props.changeMode}
-            disabled={loading || sorting}
-          >
-            <option value="3">Random</option>
-            <option value="1">Ascending</option>
-            <option value="2">Descending</option>
-          </select>
-        </label>
+        <div className="group">
+          <label>
+            Rows
+            <input
+              type="number"
+              step="1"
+              min="0"
+              max="10000"
+              value={row}
+              onChange={props.changeRow}
+              disabled={loading || sorting}
+            />
+          </label>
+          <label>
+            Columns
+            <input
+              type="number"
+              step="1"
+              min="0"
+              max="10000"
+              value={col}
+              onChange={props.changeColumn}
+              disabled={loading || sorting}
+            />
+          </label>
+        </div>
+        <div className="group">
+          <label>
+            Start
+            <input
+              type="text"
+              defaultValue={start}
+              onBlur={props.changeStart}
+              disabled={loading || sorting}
+            />
+          </label>
+          <label>
+            End
+            <input
+              type="text"
+              defaultValue={end}
+              onBlur={props.changeEnd}
+              disabled={loading || sorting}
+            />
+          </label>
+        </div>
         <button
           style={{ alignSelf: "flex-start", margin: "10px 0" }}
           onClick={props.generateList}
           disabled={loading || sorting}
         >
-          {" "}
           Generate
         </button>
         <label>
@@ -80,7 +103,7 @@ class ToolBarC extends Component {
             disabled={loading || sorting}
             onClick={() => props.processList(props.algo)}
           >
-            Sort
+            Search
           </button>
           <button
             className="red"
