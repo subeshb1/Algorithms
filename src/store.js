@@ -5,10 +5,7 @@ import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 
 const configureStore = () => {
-  const store = createStore(
-    sorting,
-    applyMiddleware(thunk)
-  );
+  const store = createStore(sorting, applyMiddleware(thunk));
 
   return store;
 };
