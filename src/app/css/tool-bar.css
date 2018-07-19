@@ -70,8 +70,19 @@ div.btn-group {
 div.group {
   display: flex;
 }
-div.group > label{
+div.group > label {
   width: 100%;
+}
+
+.checkbox {
+  display: flex;
+}
+
+.checkbox > input {
+  position: relative;
+  margin: 0.5em 0.2em;
+  align-self: flex-start;
+  width: auto;
 }
 @media (max-width: 700px) {
   .tool-bar {

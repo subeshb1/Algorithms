@@ -9,7 +9,7 @@ self.onmessage = e => {
   const col = e.data[1];
   const start = check(...e.data[2], row, col);
   const end = check(...e.data[3], row, col, 1);
-
+  console.log(row,col);
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
       let className = undefined;
@@ -17,8 +17,8 @@ self.onmessage = e => {
       else if (i === end[0] && j === end[1]) className = "end";
 
       arr.push({
-        x: i * 10,
-        y: j * 10,
+        x: j * 10,
+        y: i * 10,
         className,
         color: "white",
         pos: { i, j },

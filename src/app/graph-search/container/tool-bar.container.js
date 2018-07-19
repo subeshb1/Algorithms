@@ -20,8 +20,8 @@ class ToolBarC extends Component {
     const { props } = this;
     const {
       algo,
-      tool: { row, col, step, interval, start, end },
-      draw: { loading, sorting }
+      tool: { row, col, step, interval, start, end, diagonal },
+      draw: { loading, searching }
     } = props;
     return (
       <div className="tool-bar" key={"#2"}>
@@ -41,7 +41,7 @@ class ToolBarC extends Component {
               max="10000"
               value={row}
               onChange={props.changeRow}
-              disabled={loading || sorting}
+              disabled={loading || searching}
             />
           </label>
           <label>
@@ -53,7 +53,7 @@ class ToolBarC extends Component {
               max="10000"
               value={col}
               onChange={props.changeColumn}
-              disabled={loading || sorting}
+              disabled={loading || searching}
             />
           </label>
         </div>
@@ -64,7 +64,7 @@ class ToolBarC extends Component {
               type="text"
               defaultValue={start}
               onBlur={props.changeStart}
-              disabled={loading || sorting}
+              disabled={loading || searching}
             />
           </label>
           <label>
@@ -73,14 +73,14 @@ class ToolBarC extends Component {
               type="text"
               defaultValue={end}
               onBlur={props.changeEnd}
-              disabled={loading || sorting}
+              disabled={loading || searching}
             />
           </label>
         </div>
         <button
           style={{ alignSelf: "flex-start", margin: "10px 0" }}
           onClick={props.generateList}
-          disabled={loading || sorting}
+          disabled={loading || searching}
         >
           Generate
         </button>
@@ -97,17 +97,29 @@ class ToolBarC extends Component {
             onChange={props.changeInterval}
           />
         </label>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            step="1"
+            min="1"
+            max="10000"
+            checked={diagonal}
+            onChange={props.changeDiagonal}
+          />
+          Allow Diagonal
+        </label>
+
         <div className="btn-group">
           <button
             className="green"
-            disabled={loading || sorting}
+            disabled={loading || searching}
             onClick={() => props.processList(props.algo)}
           >
             Search
           </button>
           <button
             className="red"
-            disabled={!sorting && !loading}
+            disabled={!searching && !loading}
             onClick={props.cancel}
           >
             Stop

@@ -1,15 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 import { getDrawBoardState } from "../reducers";
+import { draw_action } from "../actions";
+
 const DrawBoard = props => {
   const {
     draw: {
       list: { graph, row, col },
-      loading
-    }
+      loading,
+      pressed
+    },
+    onPress,
+    onRelease,
+    makeBlock
   } = props;
-  const m = 100,
-    n = 50;
   return (
     <div className="drawboard">
       {loading && (
@@ -19,12 +23,14 @@ const DrawBoard = props => {
       )}
       <svg
         preserveAspectRatio="none"
-        viewBox={`0 0 ${row}0 ${col}0`}
+        viewBox={`0 0 ${col}0 ${row}0`}
         vectorEffect="none"
+        onMouseDown={() => onPress()}
+        onMouseUp={() => onRelease()}
       >
         <style>
           {`rect {`}
-          stroke: {loading ? "white" : "black"}; vector-effect:{" "}
+          stroke: {loading ? "white" : "grey"}; vector-effect:{" "}
           {loading ? "" : "non-scaling-stroke"};
           {"}"}
           {`
@@ -43,8 +49,10 @@ const DrawBoard = props => {
             key={i}
             width="10"
             height="10"
-            stroke="black"
+            stroke="grey"
             strokeWidth="0.5"
+            onMouseDown={() => makeBlock(i)}
+            onMouseOver={() => pressed && makeBlock(i,1)}
           />
         ))}
       </svg>
@@ -55,4 +63,7 @@ const mapStateToProps = (state, ownProps) => ({
   draw: getDrawBoardState(state)
 });
 
-export default connect(mapStateToProps)(DrawBoard);
+export default connect(
+  mapStateToProps,
+  draw_action
+)(DrawBoard);

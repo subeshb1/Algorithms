@@ -22,5 +22,9 @@ export const changeEnd = payload => ({
   type: "GRAPH_TOOL_END",
   payload
 });
+export const changeDiagonal = payload => ({
+  type: "GRAPH_TOOL_DIAGONAL",
+  payload
+});
 
 export const clear = () => ({ type: "GRAPH_CLEAR" });

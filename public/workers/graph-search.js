@@ -84,7 +84,7 @@ class BreadthFirstSearch {
   search(initial, goal, diagonal = false) {
     let start = this._graph.at(initial);
     const getPos = this._graph.getPos.bind(this._graph);
-    
+
     let action = [];
     start.color = "Gainsboro";
     start.predecessor = undefined;
@@ -133,8 +133,9 @@ class BreadthFirstSearch {
   }
 }
 
-self.onmessage = ({ data: [algo, { graph, col, row }, [i, j], [i2, j2]] }) => {
-  let search = new BreadthFirstSearch(graph, col, row);
-
-  self.postMessage(search.search({ i, j }, { i: i2, j: j2 }, true));
+self.onmessage = ({
+  data: [algo, { graph, col, row }, [i, j], [i2, j2], diagonal]
+}) => {
+  let search = new BreadthFirstSearch(graph, row, col);
+  self.postMessage(search.search({ i, j }, { i: i2, j: j2 }, diagonal));
 };

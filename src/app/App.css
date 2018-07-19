@@ -4,7 +4,7 @@ body {
 }
 
 :root {
-  --theme-background: black;
+  --theme-background: #812360;
   --theme-color: white;
   --theme-radius: 4px;
   --theme-hover-bg: red;
@@ -39,7 +39,7 @@ body {
 }
 
 .navbar > .header.item > img {
-  width: 40px;
+  width: 30px;
   margin-right: 10px;
 }
 .navbar > .header.item > button {
@@ -58,14 +58,13 @@ body {
   .navbar .header.item {
     display: flex;
   }
-  
+
   .navbar:hover .item {
     display: flex;
   }
 }
 /* MAIN */
 #root {
- 
   background-color: rgb(231, 231, 231);
   /* height: 100vh; */
 }
@@ -81,8 +80,7 @@ body {
   font-size: 1.6rem;
 }
 
-
-a{
+a {
   text-decoration: none;
   color: inherit;
 }

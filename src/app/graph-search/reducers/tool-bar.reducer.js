@@ -6,7 +6,7 @@ const range = (e, m, n, mode = 0) => {
   const arr = e.target.value.split(/\s+|,/g);
   const i = normalize(arr[0]);
   const j = normalize(arr[1]);
-  const s = [i < m ? i : !mode ? 0 : m-1, j < n ? j : !mode ? 0 : n-1];
+  const s = [i < m ? i : !mode ? 0 : m - 1, j < n ? j : !mode ? 0 : n - 1];
   e.target.value = s;
   console.log(s);
   return s;
@@ -18,15 +18,16 @@ const toolBarReducer = (
     step: 1,
     interval: 10,
     start: [0, 0],
-    end: [14, 14]
+    end: [14, 14],
+    diagonal: true
   },
   action
 ) => {
   switch (action.type) {
     case "GRAPH_TOOL_ROW":
-      return { ...state, row: extractData(action.payload, 100) };
+      return { ...state, row: extractData(action.payload, 50) };
     case "GRAPH_TOOL_COLUMN":
-      return { ...state, col: extractData(action.payload, 100) };
+      return { ...state, col: extractData(action.payload, 50) };
     case "GRAPH_TOOL_STEP":
       return { ...state, step: extractData(action.payload) };
     case "GRAPH_TOOL_INTERVAL":
@@ -35,6 +36,8 @@ const toolBarReducer = (
       return { ...state, start: range(action.payload, state.row, state.col) };
     case "GRAPH_TOOL_END":
       return { ...state, end: range(action.payload, state.row, state.col, 1) };
+    case "GRAPH_TOOL_DIAGONAL":
+      return { ...state, diagonal: action.payload.target.checked };
     default:
       return state;
   }
