@@ -64,6 +64,7 @@ select:disabled {
 
 div.btn-group {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   margin-top: 10px;
 }
@@ -80,7 +81,7 @@ div.group > label {
 
 .checkbox > input {
   position: relative;
-  margin: 0.5em 0.2em;
+  margin: 0.4em 0.2em;
   align-self: flex-start;
   width: auto;
 }

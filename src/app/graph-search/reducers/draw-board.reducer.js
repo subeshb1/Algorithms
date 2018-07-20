@@ -1,39 +1,5 @@
 import { combineReducers } from "redux";
 
-const drawReducer = (
-  state = {
-    finished: false,
-    swap: [],
-    pivot: -1,
-    boundary: []
-  },
-  action
-) => {
-  switch (action.type) {
-    case "LIST_ACTION":
-      const { pivot, boundary, swap, finished } = action;
-      return { ...state, pivot, boundary, swap, finished };
-    case "FINISHED":
-      return {
-        ...state,
-        finished: true,
-        swap: [],
-        pivot: -1,
-        boundary: []
-      };
-    case "CANCELLED":
-    case "LIST_GENERATE":
-      return {
-        ...state,
-        finished: false,
-        swap: [],
-        pivot: -1,
-        boundary: []
-      };
-    default:
-      return state;
-  }
-};
 const isLoading = (state = false, action) => {
   switch (action.type) {
     case "GRAPH_LIST_GENERATE":
@@ -59,27 +25,37 @@ const isSearching = (state = false, action) => {
       return state;
   }
 };
-const listReducer = (state = { graph: [], row: 0, col: 0 }, action) => {
+const listReducer = (
+  state = { graph: [], row: 0, col: 0, path: undefined, displayText: false },
+  action
+) => {
   switch (action.type) {
     case "GRAPH_LIST_GENERATED":
     case "GRAPH_LIST_ACTION":
       return action.payload;
+    case "GRAPH_LIST_TEXT":
+      return { ...state, displayText: action.payload.target.checked };
     case "GRAPH_LIST_WHITE":
       return {
         ...state,
         graph: state.graph.map(x => {
-          if (x.color !== "white" && x.color !== "black") x.color = "white";
+          x.text = undefined;
+          if (x.color !== "UNVISITED" && x.color !== "BLOCK") {
+            x.color = "UNVISITED";
+          }
           return x;
-        })
+        }),
+        path: undefined
       };
     case "GRAPH_CLEAR":
-      return { graph: [], row: 0, col: 0 };
+      return { graph: [], row: 0, col: 0, displayText: false };
     case "GRAPH_LIST_BLOCK":
       const { graph } = state;
+      if (graph[action.payload].className) return state;
       if (!action.mode)
         graph[action.payload].color =
-          graph[action.payload].color === "black" ? "white" : "black";
-      else graph[action.payload].color = "black";
+          graph[action.payload].color === "BLOCK" ? "UNVISITED" : "BLOCK";
+      else graph[action.payload].color = "BLOCK";
       return {
         ...state,
         graph
@@ -127,7 +103,6 @@ export const isPressed = (state = false, action) => {
 export default combineReducers({
   loading: isLoading,
   searching: isSearching,
-  state: drawReducer,
   worker: workerReducer,
   list: listReducer,
   new: isNew,

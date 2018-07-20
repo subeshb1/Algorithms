@@ -19,7 +19,8 @@ const toolBarReducer = (
     interval: 10,
     start: [0, 0],
     end: [14, 14],
-    diagonal: true
+    diagonal: true,
+    displayText: false
   },
   action
 ) => {
@@ -31,13 +32,15 @@ const toolBarReducer = (
     case "GRAPH_TOOL_STEP":
       return { ...state, step: extractData(action.payload) };
     case "GRAPH_TOOL_INTERVAL":
-      return { ...state, interval: extractData(action.payload) };
+      return { ...state, interval: extractData(action.payload, 10000) };
     case "GRAPH_TOOL_START":
       return { ...state, start: range(action.payload, state.row, state.col) };
     case "GRAPH_TOOL_END":
       return { ...state, end: range(action.payload, state.row, state.col, 1) };
     case "GRAPH_TOOL_DIAGONAL":
       return { ...state, diagonal: action.payload.target.checked };
+    case "GRAPH_TOOL_TEXT":
+      return { ...state, displayText: action.payload.target.checked };
     default:
       return state;
   }

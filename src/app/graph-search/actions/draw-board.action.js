@@ -1,31 +1,41 @@
 import { getGraph } from "../reducers";
 const sortList = data => async (dispatch, getState) => {
   let i = 0;
+  let action;
   const {
     draw: {
-      list: { graph, row, col }
+      list: { graph, row, col, displayText }
     }
   } = getGraph(getState());
   for (let item of data) {
-    console.log();
     const {
       tool: { step, interval },
       draw: { searching }
     } = getGraph(getState());
     if (!searching) return;
-    graph[item.pos].color = item.color;
+    if (!item.path) {
+      graph[item.pos].color = item.color;
+      if (item.text) graph[item.pos].text = item.text;
+      action = {
+        type: "GRAPH_LIST_ACTION",
+        payload: { graph, row, col, displayText }
+      };
+    } else {
+      action = {
+        type: "GRAPH_LIST_ACTION",
+        payload: { graph, row, col, path: item.path, displayText }
+      };
+    }
+
     if (i % step === 0 || !step) {
       await new Promise(resolve =>
         setTimeout(() => {
           const {
             draw: { searching }
           } = getGraph(getState());
-          dispatch({
-            type: "GRAPH_LIST_ACTION",
-            payload: { graph, row, col }
-          });
+          if (!searching) return;
+          dispatch(action);
           resolve();
-          // if (!searching) return;
         }, interval)
       );
       i = 0;
@@ -33,10 +43,7 @@ const sortList = data => async (dispatch, getState) => {
 
     i++;
   }
-  dispatch({
-    type: "GRAPH_LIST_ACTION",
-    payload: { graph, row, col }
-  });
+  dispatch(action);
   dispatch({ type: "GRAPH_FINISHED" });
 };
 
@@ -84,5 +91,10 @@ export const makeBlock = (i, mode = 0) => (dispatch, getState) => {
   }
 };
 
-export const onPress = i => ({ type: "GRAPH_PRESS" });
 export const onRelease = i => ({ type: "GRAPH_RELEASE" });
+export const onPress = i => ({ type: "GRAPH_PRESS" });
+export const clearColor = i => ({ type: "GRAPH_LIST_WHITE" });
+export const changeDisplayText = payload => ({
+  type: "GRAPH_LIST_TEXT",
+  payload
+});

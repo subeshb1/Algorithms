@@ -21,7 +21,7 @@ class ToolBarC extends Component {
     const {
       algo,
       tool: { row, col, step, interval, start, end, diagonal },
-      draw: { loading, searching }
+      draw: { loading, searching,displayText }
     } = props;
     return (
       <div className="tool-bar" key={"#2"}>
@@ -77,13 +77,18 @@ class ToolBarC extends Component {
             />
           </label>
         </div>
-        <button
-          style={{ alignSelf: "flex-start", margin: "10px 0" }}
-          onClick={props.generateList}
-          disabled={loading || searching}
-        >
-          Generate
-        </button>
+        <div className="btn-group" style={{ justifyContent: "space-between" }}>
+          <button onClick={props.generateList} disabled={loading || searching}>
+            Generate
+          </button>
+          <button
+            style={{ "--btn-color": 300 }}
+            onClick={props.clearColor}
+            disabled={loading || searching}
+          >
+            Clear
+          </button>
+        </div>
         <label>
           Step<input type="number" value={step} onChange={props.changeStep} />
         </label>
@@ -100,13 +105,20 @@ class ToolBarC extends Component {
         <label className="checkbox">
           <input
             type="checkbox"
-            step="1"
-            min="1"
-            max="10000"
             checked={diagonal}
             onChange={props.changeDiagonal}
+            disabled={loading || searching}
           />
           Allow Diagonal
+        </label>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={displayText}
+            onChange={props.changeDisplayText}
+            disabled={loading || searching}
+          />
+          Display Calculations
         </label>
 
         <div className="btn-group">

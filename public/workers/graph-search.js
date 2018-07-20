@@ -50,9 +50,7 @@ class GraphController {
       } else if (arc.to === node.pos && this.graph.arcMode === 0) {
         arr.push(arc.from);
       }
-      console.log("subesh", this.graph.arcMode);
     });
-    console.log(arr);
     return arr
       .map(pos => {
         return this.at(pos);
@@ -86,7 +84,7 @@ class BreadthFirstSearch {
     const getPos = this._graph.getPos.bind(this._graph);
 
     let action = [];
-    start.color = "Gainsboro";
+    start.color = "VISITED";
     start.predecessor = undefined;
     start.d = 0;
     let final;
@@ -99,43 +97,130 @@ class BreadthFirstSearch {
       }
 
       for (let v of this._graph.getAdjacent(u, diagonal)) {
-        if (v.color === "white") {
-          v.color = "Gainsboro";
+        if (v.color === "UNVISITED") {
+          v.color = "VISITED";
           v.predecessor = u;
           v.d = u.d + 1;
           action.push({
             pos: getPos(v.pos),
-            color: "Gainsboro"
+            color: "VISITED",
+            text: [
+              { text: getPos(u.pos), offsetX: 0, offsetY: 2 },
+              { text: v.d, offsetX: 0, offsetY: 10 }
+            ]
           });
           queue.push(v);
         }
       }
 
-      u.color = "lightcyan";
+      u.color = "EXPLORED";
       action.push({
         pos: getPos(u.pos),
-        color: "lightcyan"
+        color: "EXPLORED"
       });
     }
 
     if (final) {
+      let line = `M ${final.x + 5},${final.y + 5}`;
       let path = final.predecessor;
+      line += `L ${path.x + 5},${path.y + 5}`;
+      console.log(goal);
       while (path.predecessor) {
-        path.color = "YellowGreen";
+        path.color = "VISITED";
         action.push({
           pos: getPos(path.pos),
-          color: "YellowGreen"
+          color: "PATH"
         });
         path = path.predecessor;
+        line += ` L ${path.x + 5},${path.y + 5}`;
       }
+      action.push({
+        path: line
+      });
     }
     return action;
   }
 }
 
+class DepthFirstSearch {
+  constructor(graph, maxRow, maxCol, type = 0) {
+    this._graph = new GraphController(graph, maxRow, maxCol, type);
+  }
+  search(initial, goal, diagonal = false) {
+    this.diagonal = diagonal;
+    this.goal = goal;
+    this.action = [];
+    this.getPos = this._graph.getPos.bind(this._graph);
+    let start = this._graph.at(initial);
+    start.predecessor = undefined;
+    this.final = undefined;
+
+    this.dfs(start);
+    if (this.final) {
+      let line = `M ${this.final.x + 5},${this.final.y + 5}`;
+      let path = this.final.predecessor;
+      line += `L ${path.x + 5},${path.y + 5}`;
+      while (path.predecessor) {
+        path.color = "PATH";
+        this.action.push({
+          pos: this.getPos(path.pos),
+          color: "PATH"
+        });
+        path = path.predecessor;
+        line += ` L ${path.x + 5},${path.y + 5}`;
+      }
+      this.action.push({
+        path: line
+      });
+    }
+
+    return this.action;
+  }
+
+  dfs(u) {
+    if (u.pos.i === this.goal.i && u.pos.j === this.goal.j) {
+      u.color = "VISITED";
+      this.action.push({
+        pos: this.getPos(u.pos),
+        color: "VISITED"
+      });
+      this.final = u;
+      return;
+    }
+    u.color = "VISITED";
+    this.action.push({
+      pos: this.getPos(u.pos),
+      color: "VISITED"
+    });
+    for (let v of this._graph.getAdjacent(u, this.diagonal)) {
+      if (this.final) return;
+      if (v.color === "UNVISITED") {
+        v.predecessor = u;
+        this.dfs(v);
+      }
+    }
+    if (this.final) return;
+    u.color = "EXPLORED";
+    this.action.push({
+      pos: this.getPos(u.pos),
+      color: "EXPLORED"
+    });
+  }
+}
+
 self.onmessage = ({
-  data: [algo, { graph, col, row }, [i, j], [i2, j2], diagonal]
+  data: [algo, { graph, col, row }, [i, j], [i2, j2], diagonal, type = 0]
 }) => {
-  let search = new BreadthFirstSearch(graph, row, col);
+  let search;
+  switch (algo) {
+    case "dfs":
+      search = new DepthFirstSearch(graph, row, col, type);
+      break;
+
+    default:
+      search = new BreadthFirstSearch(graph, row, col, type);
+  }
+  console.log(algo);
+
   self.postMessage(search.search({ i, j }, { i: i2, j: j2 }, diagonal));
 };

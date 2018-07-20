@@ -27,4 +27,5 @@ export const changeDiagonal = payload => ({
   payload
 });
 
+
 export const clear = () => ({ type: "GRAPH_CLEAR" });
