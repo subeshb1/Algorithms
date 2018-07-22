@@ -1,3 +1,5 @@
+const isDiagonal = (x, y) => x.i !== y.i && x.j !== y.j;
+
 class GraphController {
   constructor(graph, maxRow, maxCol, type = 0) {
     this.type = type;
@@ -73,7 +75,6 @@ class GraphController {
     return i * this.maxCol + j;
   }
 }
-
 class BreadthFirstSearch {
   constructor(graph, maxRow, maxCol, type = 0) {
     this._graph = new GraphController(graph, maxRow, maxCol, type);
@@ -100,7 +101,7 @@ class BreadthFirstSearch {
         if (v.color === "UNVISITED") {
           v.color = "VISITED";
           v.predecessor = u;
-          v.d = u.d + 1;
+          v.d = u.d + 10;
           action.push({
             pos: getPos(v.pos),
             color: "VISITED",
@@ -150,6 +151,7 @@ class DepthFirstSearch {
     this.diagonal = diagonal;
     this.goal = goal;
     this.action = [];
+    this.time = 0;
     this.getPos = this._graph.getPos.bind(this._graph);
     let start = this._graph.at(initial);
     start.predecessor = undefined;
@@ -178,20 +180,19 @@ class DepthFirstSearch {
   }
 
   dfs(u) {
-    if (u.pos.i === this.goal.i && u.pos.j === this.goal.j) {
-      u.color = "VISITED";
-      this.action.push({
-        pos: this.getPos(u.pos),
-        color: "VISITED"
-      });
-      this.final = u;
-      return;
-    }
+    this.time++;
+    u.d = this.time;
     u.color = "VISITED";
     this.action.push({
       pos: this.getPos(u.pos),
-      color: "VISITED"
+      color: "VISITED",
+      text: [{ text: u.d, offsetX: 0, offsetY: 2 }]
     });
+    if (u.pos.i === this.goal.i && u.pos.j === this.goal.j) {
+      this.final = u;
+      return;
+    }
+
     for (let v of this._graph.getAdjacent(u, this.diagonal)) {
       if (this.final) return;
       if (v.color === "UNVISITED") {
@@ -199,12 +200,98 @@ class DepthFirstSearch {
         this.dfs(v);
       }
     }
-    if (this.final) return;
+
     u.color = "EXPLORED";
+    this.time++;
+    u.f = this.time;
     this.action.push({
       pos: this.getPos(u.pos),
-      color: "EXPLORED"
+      color: "EXPLORED",
+      text: [
+        { text: u.d, offsetX: 0, offsetY: 2 },
+        { text: u.f, offsetX: 0, offsetY: 10 }
+      ]
     });
+    if (this.final) return;
+  }
+}
+
+class Dijkstras {
+  constructor(graph, maxRow, maxCol, type = 0) {
+    this._graph = new GraphController(graph, maxRow, maxCol, type);
+  }
+  search(initial, goal, diagonal = false) {
+    this._graph.graph.forEach(x => {
+      x.d = Infinity;
+      x.predecessor = null;
+    });
+    const getPos = this._graph.getPos.bind(this._graph);
+    let start = this._graph.at(initial);
+    start.d = 0;
+    let action = [];
+    const queue = [...this._graph.graph].filter(x => x.color !== "BLOCK");
+    const s = [];
+    let final;
+    while (queue.length !== s.length) {
+      let u = this._graph.graph.reduce(
+        (acc, next) => {
+          if (next.d < acc.d && !next.visit) return next;
+          return acc;
+        },
+        { d: Infinity }
+      );
+      if (!u.pos) break;
+      if (u.pos.i === goal.i && u.pos.j === goal.j) {
+        final = u;
+        break;
+      }
+      u.visit = true;
+      s.push(queue[getPos(u.pos)]);
+
+      action.push({
+        pos: getPos(u.pos),
+        color: "EXPLORED"
+      });
+
+      for (let v of this._graph.getAdjacent(u, diagonal)) {
+        const dis = u.d + (isDiagonal(u.pos, v.pos) ? 14 : 10);
+        if (v.d > dis && v.color !== "BLOCK") {
+          v.d = dis;
+          v.predecessor = u;
+
+          action.push({
+            pos: getPos(v.pos),
+            color: "VISITED",
+            text: [
+              { text: getPos(u.pos), offsetX: 0, offsetY: 2 },
+              { text: v.d, offsetX: 0, offsetY: 10 }
+            ]
+          });
+        }
+        if (final) {
+          break;
+        }
+      }
+    }
+
+    if (final) {
+      let line = `M ${final.x + 5},${final.y + 5}`;
+      let path = final.predecessor;
+      line += `L ${path.x + 5},${path.y + 5}`;
+      while (path.predecessor) {
+        path.color = "VISITED";
+        action.push({
+          pos: getPos(path.pos),
+          color: "PATH"
+        });
+        path = path.predecessor;
+        line += ` L ${path.x + 5},${path.y + 5}`;
+      }
+      action.push({
+        path: line
+      });
+    }
+    return action;
   }
 }
 
@@ -216,7 +303,9 @@ self.onmessage = ({
     case "dfs":
       search = new DepthFirstSearch(graph, row, col, type);
       break;
-
+    case "dijkstras":
+      search = new Dijkstras(graph, row, col, type);
+      break;
     default:
       search = new BreadthFirstSearch(graph, row, col, type);
   }

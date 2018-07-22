@@ -1,7 +1,7 @@
 import { getGraph } from "../reducers";
 const sortList = data => async (dispatch, getState) => {
   let i = 0;
-  let action;
+  let action = { type: "NULL" };
   const {
     draw: {
       list: { graph, row, col, displayText }
@@ -28,6 +28,7 @@ const sortList = data => async (dispatch, getState) => {
     }
 
     if (i % step === 0 || !step) {
+      // eslint-disable-next-line
       await new Promise(resolve =>
         setTimeout(() => {
           const {
@@ -53,17 +54,18 @@ export const generateList = () => (dispatch, getState) => {
     payload: "/workers/generate-graph.js"
   });
   const {
-    draw: { worker },
-    tool: { row, col, start, end }
+    draw: { worker,list:{displayText} },
+    tool: { row, col, start, end },
+
+
   } = getGraph(getState());
   worker.onmessage = e => {
-    console.log(e.data);
     dispatch({
       type: "GRAPH_LIST_GENERATED",
       payload: e.data
     });
   };
-  worker.postMessage([row, col, start, end]);
+  worker.postMessage([row, col, start, end,displayText]);
 };
 export const processList = algo => (dispatch, getState) => {
   dispatch({ type: "GRAPH_LIST_WHITE" });

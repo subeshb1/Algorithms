@@ -9,7 +9,7 @@ self.onmessage = e => {
   const col = e.data[1];
   const start = check(...e.data[2], row, col);
   const end = check(...e.data[3], row, col, 1);
-  console.log(row, col);
+  const displayText = e.data[4];
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
       let className = undefined;
@@ -27,5 +27,6 @@ self.onmessage = e => {
       });
     }
   }
-  self.postMessage({ graph: arr, row, col });
+  console.log(displayText)
+  self.postMessage({ graph: arr, row, col, displayText });
 };

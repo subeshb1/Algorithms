@@ -17,7 +17,7 @@ const toolBarReducer = (
     col: 15,
     step: 1,
     interval: 10,
-    start: [0, 0],
+    start: [7, 7],
     end: [14, 14],
     diagonal: true,
     displayText: false
