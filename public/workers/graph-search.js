@@ -1,5 +1,30 @@
+const throttle = (callback, sec = 0) => {
+  let currentTime = 0;
+  return arg => {
+    const presentTime = Date.now();
+    if (presentTime - currentTime >= sec) {
+      callback(arg);
+      currentTime = presentTime;
+    }
+  };
+};
 const isDiagonal = (x, y) => x.i !== y.i && x.j !== y.j;
+const search = ({ i: x, j: y }, list) =>
+  list.find(({ pos: { i, j } }) => i === x && j === y);
 
+const heuristic = (x, y, type) => {
+  switch (type) {
+    case "DIAGONAL":
+      return Math.max(Math.abs(x.i - y.i), Math.abs(x.j - y.j));
+    case "EUCLIDEAN":
+      return Math.pow(x.i - y.i, 2) + Math.pow(x.j - y.j, 2);
+    default:
+      return Math.abs(x.i - y.i) + Math.abs(x.j - y.j);
+  }
+};
+const getDistance = (u, v) => (isDiagonal(u.pos, v.pos) ? 14 : 10);
+
+const isGoal = ({ i, j }, goal) => i === goal.i && j === goal.j;
 class GraphController {
   constructor(graph, maxRow, maxCol, type = 0) {
     this.type = type;
@@ -41,7 +66,8 @@ class GraphController {
           val.i < this.maxRow &&
           (val.j >= 0 && val.j < this.maxCol)
       )
-      .map(pos => this.at(pos));
+      .map(pos => this.at(pos))
+      .filter(x => x.color !== "BLOCK");
   }
 
   getAdjacentTwo(node) {
@@ -254,8 +280,8 @@ class Dijkstras {
       });
 
       for (let v of this._graph.getAdjacent(u, diagonal)) {
-        const dis = u.d + (isDiagonal(u.pos, v.pos) ? 14 : 10);
-        if (v.d > dis && v.color !== "BLOCK") {
+        const dis = u.d + getDistance(u, v);
+        if (v.d > dis) {
           v.d = dis;
           v.predecessor = u;
 
@@ -295,6 +321,93 @@ class Dijkstras {
   }
 }
 
+class AStar {
+  constructor(graph, maxRow, maxCol, type = 0) {
+    this._graph = new GraphController(graph, maxRow, maxCol, type);
+  }
+
+  search(initial, goal, diagonal = false) {
+    const getPos = this._graph.getPos.bind(this._graph);
+    let start = this._graph.at(initial);
+    let heuristicValues = this._graph.graph.map(x => heuristic(x.pos, goal));
+    let open = [{ pos: start.pos, f: 0, g: 0 }];
+    let close = [];
+    let final;
+    let action = [];
+    while (open.length) {
+      let q = open.reduce(
+        (acc, next, i) => {
+          if (next.f < acc.f) return { ...next, i };
+          return acc;
+        },
+        { f: Infinity, i: -1 }
+      );
+      if (q.i === -1) break;
+      action.push({
+        pos: getPos(q.pos),
+        color: "VISITED",
+        text: [{ text: q.f, offsetX: 0, offsetY: 2 }]
+      });
+      open.splice(q.i, 1);
+      let c = 0;
+      for (let v of this._graph.getAdjacent(q, diagonal)) {
+        const h = heuristic(v.pos, goal);
+        const g =  q.g;
+        const f = h + g;
+        if (isGoal(v.pos, goal)) {
+          final = {
+            pos: v.pos,
+            f,
+            g,
+            h,
+            predecessor: q
+          };
+          break;
+        }
+        const inClose = search(v.pos, close);
+        if (!inClose) {
+          const inOpen = search(v.pos, open);
+          if (!inOpen || (inOpen && inOpen.f > f)) {
+            open.push({
+              pos: v.pos,
+              f,
+              g,
+              predecessor: q
+            });
+            action.push({
+              pos: getPos(v.pos),
+              color: "VISITED"
+            });
+          }
+        }
+      }
+      if (final) break;
+      close.push(q);
+      action.push({
+        pos: getPos(q.pos),
+        color: "EXPLORED"
+      });
+    }
+    if (final) {
+      // let line = `M ${final.x + 5},${final.y + 5}`;
+      let path = final.predecessor;
+      // line += `L ${path.x + 5},${path.y + 5}`;
+      while (path.predecessor) {
+        path.color = "VISITED";
+        action.push({
+          pos: getPos(path.pos),
+          color: "PATH"
+        });
+        path = path.predecessor;
+        // line += ` L ${path.x + 5},${path.y + 5}`;
+      }
+      // action.push({
+      //   path: line
+      // });
+    }
+    return action;
+  }
+}
 self.onmessage = ({
   data: [algo, { graph, col, row }, [i, j], [i2, j2], diagonal, type = 0]
 }) => {
@@ -302,6 +415,9 @@ self.onmessage = ({
   switch (algo) {
     case "dfs":
       search = new DepthFirstSearch(graph, row, col, type);
+      break;
+    case "a-star":
+      search = new AStar(graph, row, col, type);
       break;
     case "dijkstras":
       search = new Dijkstras(graph, row, col, type);

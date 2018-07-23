@@ -54,10 +54,11 @@ export const generateList = () => (dispatch, getState) => {
     payload: "/workers/generate-graph.js"
   });
   const {
-    draw: { worker,list:{displayText} },
-    tool: { row, col, start, end },
-
-
+    draw: {
+      worker,
+      list: { displayText }
+    },
+    tool: { row, col, start, end }
   } = getGraph(getState());
   worker.onmessage = e => {
     dispatch({
@@ -65,7 +66,7 @@ export const generateList = () => (dispatch, getState) => {
       payload: e.data
     });
   };
-  worker.postMessage([row, col, start, end,displayText]);
+  worker.postMessage([row, col, start, end, displayText]);
 };
 export const processList = algo => (dispatch, getState) => {
   dispatch({ type: "GRAPH_LIST_WHITE" });
