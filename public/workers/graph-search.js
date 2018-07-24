@@ -343,29 +343,23 @@ class AStar {
         { f: Infinity, i: -1 }
       );
       if (q.i === -1) break;
+      if (isGoal(q.pos, goal)) {
+        final = q;
+        break;
+      }
       action.push({
         pos: getPos(q.pos),
-        color: "VISITED",
-        text: [{ text: q.f, offsetX: 0, offsetY: 2 }]
+        color: "EXPLORED"
       });
+
       open.splice(q.i, 1);
       let c = 0;
       for (let v of this._graph.getAdjacent(q, diagonal)) {
-        const h = heuristic(v.pos, goal);
-        const g =  q.g;
+        const h = heuristic(v.pos, goal) * 10;
+        const g = getDistance(q, v) + q.g;
         const f = h + g;
-        if (isGoal(v.pos, goal)) {
-          final = {
-            pos: v.pos,
-            f,
-            g,
-            h,
-            predecessor: q
-          };
-          break;
-        }
         const inClose = search(v.pos, close);
-        if (!inClose) {
+        if (!inClose || (inClose && inClose.f > f)) {
           const inOpen = search(v.pos, open);
           if (!inOpen || (inOpen && inOpen.f > f)) {
             open.push({
@@ -376,22 +370,25 @@ class AStar {
             });
             action.push({
               pos: getPos(v.pos),
-              color: "VISITED"
+              color: "VISITED",
+              text: [
+                { text: f, offsetX: 0, offsetY: 2 },
+                { text: h, offsetX: 0, offsetY: 10 },
+                { text: g, offsetX: 6, offsetY: 10 }
+              ]
             });
           }
         }
       }
       if (final) break;
       close.push(q);
-      action.push({
-        pos: getPos(q.pos),
-        color: "EXPLORED"
-      });
     }
     if (final) {
-      // let line = `M ${final.x + 5},${final.y + 5}`;
+      let final1 = this._graph.at(final.pos);
+      let line = `M ${final1.x + 5},${final1.y + 5}`;
       let path = final.predecessor;
-      // line += `L ${path.x + 5},${path.y + 5}`;
+      let path1 = this._graph.at(path.pos);
+      line += `L ${path1.x + 5},${path1.y + 5}`;
       while (path.predecessor) {
         path.color = "VISITED";
         action.push({
@@ -399,11 +396,12 @@ class AStar {
           color: "PATH"
         });
         path = path.predecessor;
-        // line += ` L ${path.x + 5},${path.y + 5}`;
+        path1 = this._graph.at(path.pos);
+        line += ` L ${path1.x + 5},${path1.y + 5}`;
       }
-      // action.push({
-      //   path: line
-      // });
+      action.push({
+        path: line
+      });
     }
     return action;
   }
