@@ -1,14 +1,14 @@
 import React from "react";
 import ToolBar from "./container/tool-bar.container";
-import "../css/index.css";
+
 import Menu from "../components/menu";
 import DrawBoard from "./container/draw-board.container";
 
-const links = ["/bfs", "/dfs", "/a-star", "/gbs", "/dijkstras"];
+const links = ["/bfs", "/dfs", "/a-star", "/dijkstras"];
 
 const getAlgoFromPath = pathname => {
   const algo = pathname.slice(1);
-  if (algo !== "dfs" && algo !== "a-star" && algo !== "gbs" &&  algo !== "dijkstras") return "bfs";
+  if (algo !== "dfs" && algo !== "a-star" && algo !== "dijkstras") return "bfs";
   return algo;
 };
 

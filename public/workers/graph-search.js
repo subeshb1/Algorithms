@@ -371,7 +371,6 @@ class AStar {
         const f = h + g;
         const inClose = close[getPos(v.pos)];
         if (!inClose) {
-          // const inOpen = search(v.pos, open);
           const inOpen = detail[getPos(v.pos)];
           if (!inOpen || (inOpen && inOpen.f > f)) {
             open.push({
@@ -421,7 +420,6 @@ class AStar {
         path: line
       });
     }
-    console.log(action.length,open.length);
     return action;
   }
 }
