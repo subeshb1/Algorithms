@@ -13,6 +13,17 @@ const search = ({ i: x, j: y }, list) =>
   list.find(({ pos: { i, j } }) => i === x && j === y);
 
 const heuristic = (x, y, type) => {
+  // 1  1  1
+  // 1  1  1
+
+  // 1,1 2,3
+
+  // if(x.i === y.i) {
+
+  // } else if (x.j === y.j) {
+
+  // }
+
   switch (type) {
     case "DIAGONAL":
       return Math.max(Math.abs(x.i - y.i), Math.abs(x.j - y.j));
@@ -329,7 +340,7 @@ class AStar {
   search(initial, goal, diagonal = false) {
     const getPos = this._graph.getPos.bind(this._graph);
     let start = this._graph.at(initial);
-    let heuristicValues = this._graph.graph.map(x => heuristic(x.pos, goal));
+    let detail = [];
     let open = [{ pos: start.pos, f: 0, g: 0 }];
     let close = [];
     let final;
@@ -358,9 +369,10 @@ class AStar {
         const h = heuristic(v.pos, goal) * 10;
         const g = getDistance(q, v) + q.g;
         const f = h + g;
-        const inClose = search(v.pos, close);
-        if (!inClose || (inClose && inClose.f > f)) {
-          const inOpen = search(v.pos, open);
+        const inClose = close[getPos(v.pos)];
+        if (!inClose) {
+          // const inOpen = search(v.pos, open);
+          const inOpen = detail[getPos(v.pos)];
           if (!inOpen || (inOpen && inOpen.f > f)) {
             open.push({
               pos: v.pos,
@@ -368,6 +380,12 @@ class AStar {
               g,
               predecessor: q
             });
+            detail[getPos(v.pos)] = {
+              pos: v.pos,
+              f,
+              g,
+              predecessor: q
+            };
             action.push({
               pos: getPos(v.pos),
               color: "VISITED",
@@ -381,7 +399,7 @@ class AStar {
         }
       }
       if (final) break;
-      close.push(q);
+      close[getPos(q.pos)] = q;
     }
     if (final) {
       let final1 = this._graph.at(final.pos);
@@ -403,6 +421,7 @@ class AStar {
         path: line
       });
     }
+    console.log(action.length,open.length);
     return action;
   }
 }
