@@ -1,7 +1,7 @@
 import React from "react";
 import ToolBar from "./container/tool-bar.container";
 
-import Menu from "./components/menu";
+import Menu from "../components/menu";
 import DrawBoard from "./container/draw-board.container";
 
 const links = [
@@ -40,10 +40,10 @@ let menuItems = links.map(item => ({
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
   return (
-    <div className="sorting">
+    <div className="container">
       <Menu className="menu" items={menuItems} />
       <DrawBoard />
-      <ToolBar algo={getAlgoFromPath(pathname.replace(path,""))} />
+      <ToolBar algo={getAlgoFromPath(pathname.replace(path, ""))} />
     </div>
   );
 };

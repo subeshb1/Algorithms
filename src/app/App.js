@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Route,NavLink } from "react-router-dom";
+import { Route, NavLink } from "react-router-dom";
 import "./App.css";
 import "./css/index.css";
 import { createComponent, createPortal } from "../lib";
 
 import Sorting from "./sorting";
 import Graph from "./graph-search";
+import DrawableGraph from "./drawable-graph";
 
 const Header = createPortal(document.getElementById("header"), "Header");
 const Footer = createPortal(document.getElementById("footer"), "Footer");
@@ -24,15 +25,21 @@ class App extends Component {
               <a>Algorithms</a>
             </NavItem>
             <NavItem as="a">Home</NavItem>
-            <NavItem as={NavLink} to="/sorting">Sorting</NavItem>
-            <NavItem as={NavLink} to="/graph-search">Graph</NavItem>
-            <NavItem as="a">Profile</NavItem>
-            <NavItem as="a">Login</NavItem>
+            <NavItem as={NavLink} to="/sorting">
+              Sorting
+            </NavItem>
+            <NavItem as={NavLink} to="/graph-search">
+              Graph
+            </NavItem>
+            <NavItem as={NavLink} to="/drawable-graph">
+              Drawable Graph
+            </NavItem>
           </Navbar>
         </Header>
 
         <Route path="/sorting" component={Sorting} />
         <Route path="/graph-search" component={Graph} />
+        <Route path="/drawable-graph" component={DrawableGraph} />
 
         <Footer>&copy;Copyright Subesh Bhandari</Footer>
       </React.Fragment>

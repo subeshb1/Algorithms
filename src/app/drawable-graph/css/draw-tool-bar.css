@@ -1,0 +1,10 @@
+.draw-tool-bar {
+  grid-column: -4 / -1;
+}
+
+@media (max-width: 700px) {
+    .draw-tool-bar {
+    grid-row: 4;
+    grid-column: 1/-1;
+  }
+}

@@ -53,11 +53,7 @@ class ToolBarC extends Component {
             <option value="2">Descending</option>
           </select>
         </label>
-        <button
-          style={{ alignSelf: "flex-start", margin: "10px 0" }}
-          onClick={props.generateList}
-          disabled={loading || sorting}
-        >
+        <button onClick={props.generateList} disabled={loading || sorting}>
           {" "}
           Generate
         </button>
