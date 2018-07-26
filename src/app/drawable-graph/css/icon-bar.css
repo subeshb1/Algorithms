@@ -10,10 +10,11 @@
   outline: none;
   border-radius: 4px;
 }
-.icon-bar img:hover {
+.icon-bar img:hover,
+.icon-bar img:focus {
   box-shadow: 0 0 9px 3px #aeaeae;
 }
-.icon-bar img:focus {
+.icon-bar img.active {
   box-shadow: 0 0 0 2px rgb(223, 222, 222), 0 0 0 3px #aeaeae;
 }
 

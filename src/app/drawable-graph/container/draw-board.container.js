@@ -1,58 +1,57 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getDrawBoardState } from "../reducers";
+import { getDrawBoardState, getDrawableMode } from "../reducers";
 import { draw_action } from "../actions";
-
 const DrawBoard = props => {
   const {
     draw: {
-      list: { graph, row, col, path, displayText },
+      list: { node, arc },
       loading,
-      pressed
+      pressed,
+      action: { selected, isDrag,temp }
     },
+    mode,
     onPress,
     onRelease,
     makeBlock
   } = props;
   return (
     <div className="drawboard draw-drawboard">
-      {loading && (
-        <div className="logo">
-          <img src="/logo.svg" alt="" />
-        </div>
-      )}
-      <svg
-        preserveAspectRatio="none"
-        viewBox={`0 0 ${col}0 ${row}0`}
-        vectorEffect="none"
-        onMouseDown={() => onPress()}
-        onMouseUp={() => onRelease()}
-      >
-        <style>
-          {`
-            rect {
+      <style>
+        {`
+        svg{
+          -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+          -moz-user-select: none; /* mozilla browsers */
+          -khtml-user-select: none; /* webkit (konqueror) browsers */
+          -ms-user-select: none; /* IE10+ */
+          touch-action: ${selected ? "none" : "auto"};
+        }
+          
+            circle {
             stroke: ${loading ? "white" : "grey"}; 
-            vector-effect:${loading ? "" : "non-scaling-stroke"};
+            fill:white;
+            stroke-width: 2px;
+            cursor: ${mode === 0 ? "move" : ""}
             }
-            rect.start {
+            circle.start {
               fill: ${loading ? "white" : "#ff9696"};
             }
-            rect.end {
+            circle.end {
               fill: ${loading ? "white" : "#39e6ab"};
             }
-            rect.UNVISITED {
+            circle.UNVISITED {
               fill: white;
             }
-            rect.VISITED {
+            circle.VISITED {
               fill:  ${loading ? "white" : "#9effac"};
             }
-            rect.EXPLORED {
+            circle.EXPLORED {
               fill:  ${loading ? "white" : "#aff6ff"};
             }
-            rect.PATH {
+            circle.PATH {
               fill:  ${loading ? "white" : "#94e3ff"};
             }
-            rect.BLOCK {
+            circle.BLOCK {
               fill:  ${loading ? "white" : "#c1c1c1"};
             }
             svg text {
@@ -68,54 +67,62 @@ const DrawBoard = props => {
             position: relative;
             z-index:1 ;
           }
+          .selected {
+            stroke-dasharray: 5px;
+          }
           `}
-        </style>
-        {graph.map(({ color, className, text = [], ...x }, i) => (
-          <g key={i}>
-            <rect
-              className={className || color}
-              {...x}
-              width="10"
-              height="10"
-              stroke="grey"
-              strokeWidth="0.5"
-              onMouseDown={() => makeBlock(i)}
-              onMouseOver={() => pressed && makeBlock(i, 1)}
-            />
-
-            {displayText && (
-              <text x={x.x + 4} y={x.y + 6} fontSize="2px">
-                {i}
-              </text>
-            )}
-            {displayText &&
-              text.map(({ text, offsetX, offsetY }, i) => (
-                <text
-                  x={x.x + offsetX}
-                  y={x.y + offsetY}
-                  fontSize="2px"
-                  key={i}
-                >
-                  {text}
-                </text>
-              ))}
-          </g>
-        ))}
-        {path && (
-          <path
-            d={path}
-            stroke="#f3fd24"
+      </style>
+      {loading && (
+        <div className="logo">
+          <img src="/logo.svg" alt="" />
+        </div>
+      )}
+      <svg
+        onMouseUp={() => onRelease()}
+        onPointerDown={props.onSVGDown}
+        onPointerUp={props.onNodeRelease}
+        onPointerMove={e => isDrag && props.onNodeMove(e)}
+        onTouchMove={e => isDrag && props.onNodeMove(e)}
+      >
+        {Object.values(arc).map(({ from, to, key }, i) => (
+          <line
+            x1={node[from].x}
+            y1={node[from].y}
+            x2={node[to].x}
+            y2={node[to].y}
+            stroke="black"
             strokeWidth="2"
-            fill="none"
-            vectorEffect="non-scaling-stroke"
+            key={key}
+            className={
+              selected && selected.type === "ARC" && selected.item === key
+                ? "selected"
+                : ""
+            }
           />
-        )}
+        ))}
+        {Object.values(node).map(({ x, y, key }, i) => (
+          <circle
+            cx={x}
+            cy={y}
+            r="30"
+            key={i}
+            className={
+              (selected && selected.type === "NODE" && selected.item === key) || temp===key
+                ? "selected"
+                : ""
+            }
+            onPointerDown={() =>
+              (mode === 0 || mode === 2) && props.onNodePress(key)
+            }
+          />
+        ))}
       </svg>
     </div>
   );
 };
-const mapStateToProps = (state, ownProps) => ({
-  draw: getDrawBoardState(state)
+const mapStateToProps = state => ({
+  draw: getDrawBoardState(state),
+  mode: getDrawableMode(state)
 });
 
 export default connect(
