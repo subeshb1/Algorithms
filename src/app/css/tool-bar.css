@@ -64,6 +64,10 @@ select:disabled {
   cursor: not-allowed;
 }
 
+input:read-only {
+  background: rgb(224, 224, 224);
+}
+
 div.btn-group {
   display: flex;
   flex-wrap: wrap;

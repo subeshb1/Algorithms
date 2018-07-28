@@ -18,6 +18,13 @@
   box-shadow: 0 0 0 2px rgb(223, 222, 222), 0 0 0 3px #aeaeae;
 }
 
+.icon-bar {
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+}
+
 @media (max-width: 700px) {
   .icon-bar {
     grid-column: 1/-1;

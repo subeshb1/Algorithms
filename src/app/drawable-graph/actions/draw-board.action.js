@@ -3,106 +3,79 @@ import {
   getDrawableMode,
   getDrawableAction,
   getToolsState,
-  getDrawBoardState
+  getDrawBoardState,
+  getDrawBoardList,
+  getDrawable
 } from "../reducers";
-const sortList = data => async (dispatch, getState) => {
-  let i = 0;
-  let action = { type: "NULL" };
-  const {
-    draw: {
-      list: { graph, row, col, displayText }
-    }
-  } = getGraph(getState());
-  for (let item of data) {
-    const {
-      tool: { step, interval },
-      draw: { searching }
-    } = getGraph(getState());
-    if (!searching) return;
-    if (!item.path) {
-      graph[item.pos].color = item.color;
-      if (item.text) graph[item.pos].text = item.text;
-      action = {
-        type: "DRAWABLE_LIST_ACTION",
-        payload: { graph, row, col, displayText }
-      };
-    } else {
-      action = {
-        type: "DRAWABLE_LIST_ACTION",
-        payload: { graph, row, col, path: item.path, displayText }
-      };
-    }
+// const run = data => async (dispatch, getState) => {
+//   let i = 0;
+//   let action = { type: "NULL" };
+//   const {
+//     draw: {
+//       list: { graph, row, col, displayText }
+//     }
+//   } = getGraph(getState());
+//   for (let item of data) {
+//     const {
+//       tool: { step, interval },
+//       draw: { searching }
+//     } = getGraph(getState());
+//     if (!searching) return;
+//     if (!item.path) {
+//       graph[item.pos].color = item.color;
+//       if (item.text) graph[item.pos].text = item.text;
+//       action = {
+//         type: "DRAWABLE_LIST_ACTION",
+//         payload: { graph, row, col, displayText }
+//       };
+//     } else {
+//       action = {
+//         type: "DRAWABLE_LIST_ACTION",
+//         payload: { graph, row, col, path: item.path, displayText }
+//       };
+//     }
 
-    if (i % step === 0 || !step) {
-      // eslint-disable-next-line
-      await new Promise(resolve =>
-        setTimeout(() => {
-          const {
-            draw: { searching }
-          } = getGraph(getState());
-          if (!searching) return;
-          dispatch(action);
-          resolve();
-        }, interval)
-      );
-      i = 0;
-    }
+//     if (i % step === 0 || !step) {
+//       // eslint-disable-next-line
+//       await new Promise(resolve =>
+//         setTimeout(() => {
+//           const {
+//             draw: { searching }
+//           } = getGraph(getState());
+//           if (!searching) return;
+//           dispatch(action);
+//           resolve();
+//         }, interval)
+//       );
+//       i = 0;
+//     }
 
-    i++;
-  }
-  dispatch(action);
-  dispatch({ type: "DRAWABLE_FINISHED" });
-};
+//     i++;
+//   }
+//   dispatch(action);
+//   dispatch({ type: "DRAWABLE_FINISHED" });
+// };
 
-export const generateList = () => (dispatch, getState) => {
-  return;
-  dispatch({
-    type: "DRAWABLE_LIST_GENERATE",
-    payload: "/workers/generate-graph.js"
-  });
-  const {
-    draw: {
-      worker,
-      list: { displayText }
-    },
-    tool: { row, col, start, end }
-  } = getGraph(getState());
-  worker.onmessage = e => {
-    dispatch({
-      type: "DRAWABLE_LIST_GENERATED",
-      payload: e.data
-    });
-  };
-  worker.postMessage([row, col, start, end, displayText]);
-};
+export const generateList = () => (dispatch, getState) => {};
 export const processList = algo => (dispatch, getState) => {
-  dispatch({ type: "DRAWABLE_LIST_WHITE" });
   dispatch({
     type: "DRAWABLE_LIST_PROCESS",
-    payload: "/workers/graph-search.js"
+    payload: "/workers/drawable-graph.js"
   });
   const {
     draw: { worker, list },
     tool: { start, end, diagonal }
-  } = getGraph(getState());
+  } = getDrawable(getState());
   worker.onmessage = e => {
     dispatch({ type: "DRAWABLE_LIST_PROCESSED" });
-    dispatch(sortList(e.data));
+    // dispatch(sortList(e.data));
   };
-  worker.postMessage([algo, list, start, end, diagonal]);
+  worker.postMessage([algo, list]);
 };
 
 export const cancel = () => ({ type: "DRAWABLE_CANCELLED" });
 
-export const makeBlock = (i, mode = 0) => (dispatch, getState) => {
-  if (!getGraph(getState()).draw.searching) {
-    dispatch({
-      type: "DRAWABLE_LIST_BLOCK",
-      payload: i,
-      mode
-    });
-  }
-};
+
 
 export const onRelease = i => ({ type: "DRAWABLE_RELEASE" });
 export const onPress = i => ({ type: "DRAWABLE_PRESS" });
@@ -126,7 +99,10 @@ const getOffset = e => {
     offsetX = e.touches[0].clientX - x;
     offsetY = e.touches[0].clientY - y;
   }
-  return { x: Math.max(0, offsetX), y: Math.max(offsetY, 0) };
+  return {
+    x: parseInt(Math.max(0, offsetX)),
+    y: parseInt(Math.max(offsetY, 0))
+  };
 };
 export const onNodeAdd = e => dispatch => {
   if (e.currentTarget === e.target) {
@@ -180,6 +156,19 @@ export const onNodePress = key => (dispatch, getState) => {
     }
   }
 };
+export const onArcPress = key => (dispatch, getState) => {
+  const state = getState();
+  const mode = getDrawableMode(state);
+  if (mode !== 0) return;
+  const { selected } = getDrawableAction(state);
+  if ((selected && selected.item !== key) || !selected) {
+    dispatch({
+      type: "DRAWABLE_SELECT_ITEM",
+      name: "ARC",
+      item: key
+    });
+  }
+};
 export const onNodeRelease = key => (dispatch, getState) => {
   const state = getState();
   const mode = getDrawableMode(state);
@@ -194,7 +183,6 @@ export const onNodeRelease = key => (dispatch, getState) => {
 export const onSVGDown = e => (dispatch, getState) => {
   const state = getState();
   const mode = getDrawableMode(state);
-  const { isDrag } = getDrawableAction(state);
   if (mode === 1) {
     return onNodeAdd(e)(dispatch, getState);
   } else if (e.currentTarget === e.target)
@@ -208,10 +196,58 @@ export const onNodeMove = e => (dispatch, getState) => {
   const mode = getDrawableMode(state);
   if (mode === 1 || mode === 2) return;
   const { isDrag, selected } = getDrawableAction(state);
-  if (isDrag)
+  if (isDrag) {
+    const { node } = getDrawBoardList(state);
     dispatch({
       type: "DRAWABLE_LIST_ADD_NODE",
       key: selected.item,
-      payload: getOffset(e)
+      payload: { ...node[selected.item], ...getOffset(e) }
+    });
+  }
+};
+
+export const onSelectedPropChange = prop => (dispatch, getState) => {
+  const state = getState();
+  const {
+    selected: { type, item }
+  } = getDrawableAction(state);
+  const { node, arc } = getDrawBoardList(state);
+  if (type === "NODE") {
+    console.log({ ...node[item], ...prop });
+    dispatch({
+      type: "DRAWABLE_LIST_ADD_NODE",
+      key: item,
+      payload: { ...node[item], ...prop }
+    });
+  }
+};
+
+export const setStart = key => (dispatch, getState) => {
+  const state = getState();
+  const { start } = getDrawBoardList(state);
+  if (start !== key) {
+    dispatch({
+      type: "DRAWABLE_LIST_START",
+      payload: key
+    });
+  } else
+    dispatch({
+      type: "DRAWABLE_LIST_START",
+      payload: undefined
+    });
+};
+export const setEnd = key => (dispatch, getState) => {
+  const state = getState();
+
+  const { end } = getDrawBoardList(state);
+  if (end !== key) {
+    dispatch({
+      type: "DRAWABLE_LIST_END",
+      payload: key
+    });
+  } else
+    dispatch({
+      type: "DRAWABLE_LIST_END",
+      payload: undefined
     });
 };

@@ -1,29 +1,7 @@
-const throttle = (callback, sec = 0) => {
-  let currentTime = 0;
-  return arg => {
-    const presentTime = Date.now();
-    if (presentTime - currentTime >= sec) {
-      callback(arg);
-      currentTime = presentTime;
-    }
-  };
-};
 const isDiagonal = (x, y) => x.i !== y.i && x.j !== y.j;
 const search = ({ i: x, j: y }, list) =>
   list.find(({ pos: { i, j } }) => i === x && j === y);
-
 const heuristic = (x, y, type) => {
-  // 1  1  1
-  // 1  1  1
-
-  // 1,1 2,3
-
-  // if(x.i === y.i) {
-
-  // } else if (x.j === y.j) {
-
-  // }
-
   switch (type) {
     case "DIAGONAL":
       return Math.max(Math.abs(x.i - y.i), Math.abs(x.j - y.j));
@@ -34,7 +12,6 @@ const heuristic = (x, y, type) => {
   }
 };
 const getDistance = (u, v) => (isDiagonal(u.pos, v.pos) ? 14 : 10);
-
 const isGoal = ({ i, j }, goal) => i === goal.i && j === goal.j;
 class GraphController {
   constructor(graph, maxRow, maxCol, type = 0) {
@@ -43,15 +20,11 @@ class GraphController {
     this.maxRow = maxRow;
     this.maxCol = maxCol;
   }
-
   getAdjacent(node, diagonal = false) {
     if (this.type === 0) {
       return this.getAdjacentOne(node, diagonal);
-    } else {
-      return this.getAdjacentTwo(node);
     }
   }
-
   getAdjacentOne(node, diagonal = false) {
     let { pos } = node;
     let arr = [
@@ -80,23 +53,6 @@ class GraphController {
       .map(pos => this.at(pos))
       .filter(x => x.color !== "BLOCK");
   }
-
-  getAdjacentTwo(node) {
-    let arr = [];
-    this.graph.arcs.forEach(arc => {
-      if (arc.from === node.pos) {
-        arr.push(arc.to);
-      } else if (arc.to === node.pos && this.graph.arcMode === 0) {
-        arr.push(arc.from);
-      }
-    });
-    return arr
-      .map(pos => {
-        return this.at(pos);
-      })
-      .sort((a, b) => a.x >= b.x);
-  }
-
   at(pos) {
     if (this.type === 0) {
       let { i, j } = pos;
@@ -116,11 +72,9 @@ class BreadthFirstSearch {
   constructor(graph, maxRow, maxCol, type = 0) {
     this._graph = new GraphController(graph, maxRow, maxCol, type);
   }
-
   search(initial, goal, diagonal = false) {
     let start = this._graph.at(initial);
     const getPos = this._graph.getPos.bind(this._graph);
-
     let action = [];
     start.color = "VISITED";
     start.predecessor = undefined;
@@ -133,7 +87,6 @@ class BreadthFirstSearch {
         final = u;
         break;
       }
-
       for (let v of this._graph.getAdjacent(u, diagonal)) {
         if (v.color === "UNVISITED") {
           v.color = "VISITED";
@@ -150,14 +103,9 @@ class BreadthFirstSearch {
           queue.push(v);
         }
       }
-
       u.color = "EXPLORED";
-      action.push({
-        pos: getPos(u.pos),
-        color: "EXPLORED"
-      });
+      action.push({ pos: getPos(u.pos), color: "EXPLORED" });
     }
-
     if (final) {
       let line = `M ${final.x + 5},${final.y + 5}`;
       let path = final.predecessor;
@@ -165,21 +113,15 @@ class BreadthFirstSearch {
       console.log(goal);
       while (path.predecessor) {
         path.color = "VISITED";
-        action.push({
-          pos: getPos(path.pos),
-          color: "PATH"
-        });
+        action.push({ pos: getPos(path.pos), color: "PATH" });
         path = path.predecessor;
         line += ` L ${path.x + 5},${path.y + 5}`;
       }
-      action.push({
-        path: line
-      });
+      action.push({ path: line });
     }
     return action;
   }
 }
-
 class DepthFirstSearch {
   constructor(graph, maxRow, maxCol, type = 0) {
     this._graph = new GraphController(graph, maxRow, maxCol, type);
@@ -193,7 +135,6 @@ class DepthFirstSearch {
     let start = this._graph.at(initial);
     start.predecessor = undefined;
     this.final = undefined;
-
     this.dfs(start);
     if (this.final) {
       let line = `M ${this.final.x + 5},${this.final.y + 5}`;
@@ -201,21 +142,14 @@ class DepthFirstSearch {
       line += `L ${path.x + 5},${path.y + 5}`;
       while (path.predecessor) {
         path.color = "PATH";
-        this.action.push({
-          pos: this.getPos(path.pos),
-          color: "PATH"
-        });
+        this.action.push({ pos: this.getPos(path.pos), color: "PATH" });
         path = path.predecessor;
         line += ` L ${path.x + 5},${path.y + 5}`;
       }
-      this.action.push({
-        path: line
-      });
+      this.action.push({ path: line });
     }
-
     return this.action;
   }
-
   dfs(u) {
     this.time++;
     u.d = this.time;
@@ -229,7 +163,6 @@ class DepthFirstSearch {
       this.final = u;
       return;
     }
-
     for (let v of this._graph.getAdjacent(u, this.diagonal)) {
       if (this.final) return;
       if (v.color === "UNVISITED") {
@@ -237,7 +170,6 @@ class DepthFirstSearch {
         this.dfs(v);
       }
     }
-
     u.color = "EXPLORED";
     this.time++;
     u.f = this.time;
@@ -252,7 +184,6 @@ class DepthFirstSearch {
     if (this.final) return;
   }
 }
-
 class Dijkstras {
   constructor(graph, maxRow, maxCol, type = 0) {
     this._graph = new GraphController(graph, maxRow, maxCol, type);
@@ -284,18 +215,12 @@ class Dijkstras {
       }
       u.visit = true;
       s.push(queue[getPos(u.pos)]);
-
-      action.push({
-        pos: getPos(u.pos),
-        color: "EXPLORED"
-      });
-
+      action.push({ pos: getPos(u.pos), color: "EXPLORED" });
       for (let v of this._graph.getAdjacent(u, diagonal)) {
         const dis = u.d + getDistance(u, v);
         if (v.d > dis) {
           v.d = dis;
           v.predecessor = u;
-
           action.push({
             pos: getPos(v.pos),
             color: "VISITED",
@@ -310,33 +235,25 @@ class Dijkstras {
         }
       }
     }
-
     if (final) {
       let line = `M ${final.x + 5},${final.y + 5}`;
       let path = final.predecessor;
       line += `L ${path.x + 5},${path.y + 5}`;
       while (path.predecessor) {
         path.color = "VISITED";
-        action.push({
-          pos: getPos(path.pos),
-          color: "PATH"
-        });
+        action.push({ pos: getPos(path.pos), color: "PATH" });
         path = path.predecessor;
         line += ` L ${path.x + 5},${path.y + 5}`;
       }
-      action.push({
-        path: line
-      });
+      action.push({ path: line });
     }
     return action;
   }
 }
-
 class AStar {
   constructor(graph, maxRow, maxCol, type = 0) {
     this._graph = new GraphController(graph, maxRow, maxCol, type);
   }
-
   search(initial, goal, diagonal = false) {
     const getPos = this._graph.getPos.bind(this._graph);
     let start = this._graph.at(initial);
@@ -358,11 +275,7 @@ class AStar {
         final = q;
         break;
       }
-      action.push({
-        pos: getPos(q.pos),
-        color: "EXPLORED"
-      });
-
+      action.push({ pos: getPos(q.pos), color: "EXPLORED" });
       open.splice(q.i, 1);
       let c = 0;
       for (let v of this._graph.getAdjacent(q, diagonal)) {
@@ -373,18 +286,8 @@ class AStar {
         if (!inClose) {
           const inOpen = detail[getPos(v.pos)];
           if (!inOpen || (inOpen && inOpen.f > f)) {
-            open.push({
-              pos: v.pos,
-              f,
-              g,
-              predecessor: q
-            });
-            detail[getPos(v.pos)] = {
-              pos: v.pos,
-              f,
-              g,
-              predecessor: q
-            };
+            open.push({ pos: v.pos, f, g, predecessor: q });
+            detail[getPos(v.pos)] = { pos: v.pos, f, g, predecessor: q };
             action.push({
               pos: getPos(v.pos),
               color: "VISITED",
@@ -408,17 +311,12 @@ class AStar {
       line += `L ${path1.x + 5},${path1.y + 5}`;
       while (path.predecessor) {
         path.color = "VISITED";
-        action.push({
-          pos: getPos(path.pos),
-          color: "PATH"
-        });
+        action.push({ pos: getPos(path.pos), color: "PATH" });
         path = path.predecessor;
         path1 = this._graph.at(path.pos);
         line += ` L ${path1.x + 5},${path1.y + 5}`;
       }
-      action.push({
-        path: line
-      });
+      action.push({ path: line });
     }
     return action;
   }
@@ -426,6 +324,7 @@ class AStar {
 self.onmessage = ({
   data: [algo, { graph, col, row }, [i, j], [i2, j2], diagonal, type = 0]
 }) => {
+  if (!graph.length) self.postMessage([]);
   let search;
   switch (algo) {
     case "dfs":
@@ -440,7 +339,7 @@ self.onmessage = ({
     default:
       search = new BreadthFirstSearch(graph, row, col, type);
   }
+  
   console.log(algo);
-
   self.postMessage(search.search({ i, j }, { i: i2, j: j2 }, diagonal));
 };

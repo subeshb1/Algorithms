@@ -30,8 +30,10 @@ const isSearching = (state = false, action) => {
 
 const listReducer = (
   state = {
-    node: [],
-    arc: []
+    node: {},
+    arc: {},
+    start: undefined,
+    end: undefined
   },
   action
 ) => {
@@ -48,7 +50,27 @@ const listReducer = (
       let nkey = action.key !== undefined ? action.key : nodeKey++;
       return {
         ...state,
-        node: { ...state.node, [nkey]: { ...action.payload, key: nkey } }
+        node: {
+          ...state.node,
+          [nkey]: { ...action.payload, key: nkey, color: "UNVISITED" }
+        }
+      };
+    case "DRAWABLE_LIST_START":
+      return {
+        ...state,
+        start: action.payload
+      };
+    case "DRAWABLE_LIST_END":
+      return {
+        ...state,
+        end: action.payload
+      };
+    case "DRAWABLE_CLEAR":
+      return {
+        node: {},
+        arc: {},
+        start: undefined,
+        end: undefined
       };
     default:
       return state;
@@ -69,7 +91,6 @@ export const isNew = (state = true, action) => {
 
 export const workerReducer = (state = null, action) => {
   switch (action.type) {
-    case "DRAWABLE_LIST_GENERATE":
     case "DRAWABLE_LIST_PROCESS":
       return new Worker(action.payload);
     case "DRAWABLE_LIST_GENERATED":
@@ -124,10 +145,10 @@ export default combineReducers({
   action: actionReducer
 });
 
-export const getGraph = s => s.graph;
+export const getDrawable = s => s.drawable;
 export const getDrawBoardState = state => {
   return state.drawable.draw;
 };
-
+export const getDrawBoardList = s => getDrawBoardState(s).list;
 export const getItemAt = (s, i) => s.graph.draw.list.graph[i];
 export const getDrawableAction = s => s.drawable.draw.action;

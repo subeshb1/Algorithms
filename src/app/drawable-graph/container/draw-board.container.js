@@ -2,18 +2,102 @@ import React from "react";
 import { connect } from "react-redux";
 import { getDrawBoardState, getDrawableMode } from "../reducers";
 import { draw_action } from "../actions";
+const euclideanDistance = (x1, x2, y1, y2) =>
+  parseInt(Math.pow(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2), 0.5), 10);
+const Node = ({
+  x,
+  y,
+  value,
+  mode,
+  nkey,
+  selected,
+  temp,
+  onNodePress,
+  start,
+  end
+}) => {
+  return (
+    <g onPointerDown={() => (mode === 0 || mode === 2) && onNodePress(nkey)}>
+      {end && (
+        <circle
+          cx={x}
+          cy={y}
+          r="35"
+          className={
+            (selected && selected.type === "NODE" && selected.item === nkey) ||
+            temp === nkey
+              ? "selected"
+              : ""
+          }
+        />
+      )}
+      <circle
+        cx={x}
+        cy={y}
+        r="30"
+        className={
+          (selected && selected.type === "NODE" && selected.item === nkey) ||
+          temp === nkey
+            ? "selected"
+            : ""
+        }
+      />
+      {start && (
+        <path
+          d={`M ${x - 70} ${y - 3} ${x - 50} ${y - 3} ${x - 50} ${y - 10}  ${x -
+            40} ${y}  ${x - 50} ${y + 10}  ${x - 50} ${y + 3} ${x - 70} ${y +
+            3} Z`}
+          stroke="black"
+          strokeWidth="2"
+          fill="grey"
+        />
+      )}
+      {value && (
+        <text x={x - 6} y={y + 5}>
+          {value}
+        </text>
+      )}
+    </g>
+  );
+};
+const Arc = ({ x1, x2, y1, y2, value, mode, nkey, selected, onArcPress }) => {
+  let dx = (x1 + x2) / 2;
+  let dy = (y1 + y2) / 2;
+  let angle = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
+  return (
+    <g onPointerDown={() => mode === 0 && onArcPress(nkey)}>
+      <line
+        {...{ x1, x2, y1, y2 }}
+        stroke="black"
+        strokeWidth="2"
+        className={
+          selected && selected.type === "ARC" && selected.item === nkey
+            ? "selected"
+            : ""
+        }
+      />
+      <text
+        x={dx}
+        y={dy - 15}
+        fontSize={20}
+        transform={`rotate(${angle},${dx},${dy})`}
+      >
+        {euclideanDistance(x1, x2, y1, y2)}
+      </text>
+    </g>
+  );
+};
 const DrawBoard = props => {
   const {
     draw: {
-      list: { node, arc },
+      list: { node, arc, start, end },
       loading,
-      pressed,
-      action: { selected, isDrag,temp }
+      action: { selected, isDrag, temp }
     },
     mode,
-    onPress,
     onRelease,
-    makeBlock
+    onNodePress,
+    onArcPress
   } = props;
   return (
     <div className="drawboard draw-drawboard">
@@ -27,17 +111,11 @@ const DrawBoard = props => {
           touch-action: ${selected ? "none" : "auto"};
         }
           
-            circle {
+            circle,line {
             stroke: ${loading ? "white" : "grey"}; 
             fill:white;
             stroke-width: 2px;
             cursor: ${mode === 0 ? "move" : ""}
-            }
-            circle.start {
-              fill: ${loading ? "white" : "#ff9696"};
-            }
-            circle.end {
-              fill: ${loading ? "white" : "#39e6ab"};
             }
             circle.UNVISITED {
               fill: white;
@@ -85,35 +163,35 @@ const DrawBoard = props => {
         onTouchMove={e => isDrag && props.onNodeMove(e)}
       >
         {Object.values(arc).map(({ from, to, key }, i) => (
-          <line
+          <Arc
             x1={node[from].x}
             y1={node[from].y}
             x2={node[to].x}
             y2={node[to].y}
-            stroke="black"
-            strokeWidth="2"
+            {...{
+              nkey: key,
+              onArcPress,
+              selected,
+              mode
+            }}
             key={key}
-            className={
-              selected && selected.type === "ARC" && selected.item === key
-                ? "selected"
-                : ""
-            }
           />
         ))}
-        {Object.values(node).map(({ x, y, key }, i) => (
-          <circle
-            cx={x}
-            cy={y}
-            r="30"
+        {Object.values(node).map(({ x, y, value, key }, i) => (
+          <Node
+            {...{
+              x,
+              y,
+              nkey: key,
+              selected,
+              temp,
+              mode,
+              onNodePress,
+              value,
+              start: start === key,
+              end: end === key
+            }}
             key={i}
-            className={
-              (selected && selected.type === "NODE" && selected.item === key) || temp===key
-                ? "selected"
-                : ""
-            }
-            onPointerDown={() =>
-              (mode === 0 || mode === 2) && props.onNodePress(key)
-            }
           />
         ))}
       </svg>

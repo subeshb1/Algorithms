@@ -1,31 +1,31 @@
 export const changeStep = payload => ({
-  type: "GRAPH_TOOL_STEP",
+  type: "DRAWABLE_TOOL_STEP",
   payload
 });
 export const changeRow = payload => ({
-  type: "GRAPH_TOOL_ROW",
+  type: "DRAWABLE_TOOL_ROW",
   payload
 });
 export const changeColumn = payload => ({
-  type: "GRAPH_TOOL_COLUMN",
+  type: "DRAWABLE_TOOL_COLUMN",
   payload
 });
 export const changeInterval = payload => ({
-  type: "GRAPH_TOOL_INTERVAL",
+  type: "DRAWABLE_TOOL_INTERVAL",
   payload
 });
 export const changeStart = payload => ({
-  type: "GRAPH_TOOL_START",
+  type: "DRAWABLE_TOOL_START",
   payload
 });
 export const changeEnd = payload => ({
-  type: "GRAPH_TOOL_END",
+  type: "DRAWABLE_TOOL_END",
   payload
 });
 export const changeDiagonal = payload => ({
-  type: "GRAPH_TOOL_DIAGONAL",
+  type: "DRAWABLE_TOOL_DIAGONAL",
   payload
 });
 
 
-export const clear = () => ({ type: "GRAPH_CLEAR" });
+export const clear = () => ({ type: "DRAWABLE_CLEAR" });
