@@ -84,14 +84,76 @@ class BreadthFirstSearch {
   }
 }
 
+class DepthFirstSearch {
+  constructor(graph) {
+    this._graph = new GraphController(graph);
+  }
+  search(initial, goal, mode = 0) {
+    this.mode = mode;
+    this.goal = goal;
+    this.action = [];
+    let start = this._graph.at(initial);
+    start.predecessor = undefined;
+    this.final = undefined;
+    this.dfs(start);
+    if (this.final) {
+      let path = this.final;
+      while (path) {
+        this.action.push({ key: path.key, color: "PATH" });
+        path = path.predecessor;
+      }
+    }
+    return this.action;
+  }
+  dfs(u) {
+    this.time++;
+    u.d = this.time;
+
+    if (u.key === this.goal) {
+      this.final = u;
+      this.action.push({
+        key: u.key,
+        color: "EXPLORED",
+        text: [{ text: u.d, offsetX: 0, offsetY: 2 }]
+      });
+      return;
+    }
+    u.color = "VISITED";
+    this.action.push({
+      key: u.key,
+      color: "VISITED",
+      text: [{ text: u.d, offsetX: 0, offsetY: 2 }]
+    });
+    for (let v of this._graph.getAdjacent(u, this.mode)) {
+      if (this.final) return;
+      if (v.color === "UNVISITED") {
+        v.predecessor = u;
+        this.dfs(v);
+      }
+    }
+    if (this.final) return;
+    u.color = "EXPLORED";
+    this.time++;
+    u.f = this.time;
+    this.action.push({
+      key: u.key,
+      color: "EXPLORED",
+      text: [
+        { text: u.d, offsetX: 0, offsetY: 2 },
+        { text: u.f, offsetX: 0, offsetY: 10 }
+      ]
+    });
+  }
+}
+
 self.onmessage = ({ data: [algo, { node, arc, start, end }, type = 0] }) => {
   console.log("I am here");
   if (!Object.keys(node).length) self.postMessage([]);
   let search;
   switch (algo) {
-    // case "dfs":
-    //   search = new DepthFirstSearch(graph, row, col, type);
-    //   break;
+    case "dfs":
+      search = new DepthFirstSearch({ node, arc });
+      break;
     // case "a-star":
     //   search = new AStar(graph, row, col, type);
     //   break;
