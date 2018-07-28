@@ -1,74 +1,68 @@
 import {
-  getGraph,
+  getDrawable,
   getDrawableMode,
   getDrawableAction,
-  getToolsState,
   getDrawBoardState,
-  getDrawBoardList,
-  getDrawable
+  getDrawBoardList
 } from "../reducers";
-// const run = data => async (dispatch, getState) => {
-//   let i = 0;
-//   let action = { type: "NULL" };
-//   const {
-//     draw: {
-//       list: { graph, row, col, displayText }
-//     }
-//   } = getGraph(getState());
-//   for (let item of data) {
-//     const {
-//       tool: { step, interval },
-//       draw: { searching }
-//     } = getGraph(getState());
-//     if (!searching) return;
-//     if (!item.path) {
-//       graph[item.pos].color = item.color;
-//       if (item.text) graph[item.pos].text = item.text;
-//       action = {
-//         type: "DRAWABLE_LIST_ACTION",
-//         payload: { graph, row, col, displayText }
-//       };
-//     } else {
-//       action = {
-//         type: "DRAWABLE_LIST_ACTION",
-//         payload: { graph, row, col, path: item.path, displayText }
-//       };
-//     }
 
-//     if (i % step === 0 || !step) {
-//       // eslint-disable-next-line
-//       await new Promise(resolve =>
-//         setTimeout(() => {
-//           const {
-//             draw: { searching }
-//           } = getGraph(getState());
-//           if (!searching) return;
-//           dispatch(action);
-//           resolve();
-//         }, interval)
-//       );
-//       i = 0;
-//     }
+const run = data => async (dispatch, getState) => {
+  let i = 0;
 
-//     i++;
-//   }
-//   dispatch(action);
-//   dispatch({ type: "DRAWABLE_FINISHED" });
-// };
+  let action = { type: "NULL" };
+  const {
+    draw: {
+      list: { node, arc, start, end }
+    }
+  } = getDrawable(getState());
+  for (let item of data) {
+    const {
+      tool: { step, interval },
+      draw: { searching }
+    } = getDrawable(getState());
+    if (!searching) return;
+    node[item.key].color = item.color;
+    // if (item.text) graph[item.pos].text = item.text;
+    action = {
+      type: "DRAWABLE_LIST_ACTION",
+      payload: { arc, node, start, end }
+    };
 
-export const generateList = () => (dispatch, getState) => {};
+    if (i % step === 0 || !step) {
+      // eslint-disable-next-line
+      await new Promise(resolve =>
+        setTimeout(() => {
+          const {
+            draw: { searching }
+          } = getDrawable(getState());
+          if (!searching) return;
+          dispatch(action);
+          resolve();
+        }, interval)
+      );
+      i = 0;
+    }
+
+    i++;
+  }
+  dispatch(action);
+  dispatch({ type: "DRAWABLE_FINISHED" });
+};
+
 export const processList = algo => (dispatch, getState) => {
+  dispatch({
+    type: "DRAWABLE_LIST_WHITE"
+  });
   dispatch({
     type: "DRAWABLE_LIST_PROCESS",
     payload: "/workers/drawable-graph.js"
   });
   const {
-    draw: { worker, list },
-    tool: { start, end, diagonal }
+    draw: { worker, list }
   } = getDrawable(getState());
   worker.onmessage = e => {
     dispatch({ type: "DRAWABLE_LIST_PROCESSED" });
-    // dispatch(sortList(e.data));
+    dispatch(run(e.data));
   };
   worker.postMessage([algo, list]);
 };
@@ -76,18 +70,9 @@ export const processList = algo => (dispatch, getState) => {
 export const cancel = () => ({ type: "DRAWABLE_CANCELLED" });
 
 
-
-export const onRelease = i => ({ type: "DRAWABLE_RELEASE" });
-export const onPress = i => ({ type: "DRAWABLE_PRESS" });
-
 export const clearColor = i => ({ type: "DRAWABLE_LIST_WHITE" });
 
-export const changeDisplayText = payload => ({
-  type: "DRAWABLE_LIST_TEXT",
-  payload
-});
 
-// New
 const getOffset = e => {
   const { left: x, top: y } = e.currentTarget.getBoundingClientRect();
   let offsetX;
@@ -100,8 +85,8 @@ const getOffset = e => {
     offsetY = e.touches[0].clientY - y;
   }
   return {
-    x: parseInt(Math.max(0, offsetX)),
-    y: parseInt(Math.max(offsetY, 0))
+    x: parseInt(Math.max(0, offsetX), 10),
+    y: parseInt(Math.max(offsetY, 0), 10)
   };
 };
 export const onNodeAdd = e => dispatch => {
@@ -135,7 +120,7 @@ export const onNodePress = key => (dispatch, getState) => {
       list: { arc }
     } = getDrawBoardState(state);
     if (temp !== undefined) {
-      let k1 = [temp, key].sort().join("");
+      let k1 = [temp, key].sort().join(",");
       if (temp !== key && arc[k1] === undefined)
         dispatch({
           type: "DRAWABLE_LIST_ADD_ARC",
@@ -211,9 +196,8 @@ export const onSelectedPropChange = prop => (dispatch, getState) => {
   const {
     selected: { type, item }
   } = getDrawableAction(state);
-  const { node, arc } = getDrawBoardList(state);
+  const { node } = getDrawBoardList(state);
   if (type === "NODE") {
-    console.log({ ...node[item], ...prop });
     dispatch({
       type: "DRAWABLE_LIST_ADD_NODE",
       key: item,
@@ -249,5 +233,25 @@ export const setEnd = key => (dispatch, getState) => {
     dispatch({
       type: "DRAWABLE_LIST_END",
       payload: undefined
+    });
+};
+
+export const deleteAll = () => ({
+  type: "DRAWABLE_LIST_DELETE_ALL"
+});
+
+export const deleteSelected = (key, type) => dispatch => {
+  dispatch({
+    type: "DRAWABLE_ACTION_RESET"
+  });
+  if (type === "NODE")
+    dispatch({
+      type: "DRAWABLE_LIST_DELETE_NODE",
+      payload: key
+    });
+  else
+    dispatch({
+      type: "DRAWABLE_LIST_DELETE_ARC",
+      payload: key
     });
 };

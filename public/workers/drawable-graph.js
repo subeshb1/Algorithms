@@ -38,13 +38,13 @@ class BreadthFirstSearch {
     start.predecessor = undefined;
     start.d = 0;
     action.push({
-        key: start.key,
-        color: "VISITED",
-        text: [
-          { text: start.key, offsetX: 0, offsetY: 2 },
-          { text: start.d, offsetX: 0, offsetY: 10 }
-        ]
-      });
+      key: start.key,
+      color: "VISITED",
+      text: [
+        { text: start.key, offsetX: 0, offsetY: 2 },
+        { text: start.d, offsetX: 0, offsetY: 10 }
+      ]
+    });
     let final;
     let queue = [start];
     while (queue.length !== 0) {
@@ -71,12 +71,11 @@ class BreadthFirstSearch {
         }
       }
       u.color = "EXPLORED";
-      action.push({ pos: u.key, color: "EXPLORED" });
+      action.push({ key: u.key, color: "EXPLORED" });
     }
     if (final) {
-      let path = final.predecessor;
+      let path = final;
       while (path) {
-        path.color = "VISITED";
         action.push({ key: path.key, color: "PATH" });
         path = path.predecessor;
       }
@@ -87,7 +86,7 @@ class BreadthFirstSearch {
 
 self.onmessage = ({ data: [algo, { node, arc, start, end }, type = 0] }) => {
   console.log("I am here");
-    if (!Object.keys(node).length ) self.postMessage([]);
+  if (!Object.keys(node).length) self.postMessage([]);
   let search;
   switch (algo) {
     // case "dfs":
@@ -102,9 +101,8 @@ self.onmessage = ({ data: [algo, { node, arc, start, end }, type = 0] }) => {
     default:
       search = new BreadthFirstSearch({ node, arc });
   }
-  if(start===undefined)
-    start = Object.keys(node)[0];
-console.log(start);
+  if (node[start] === undefined) start = Object.keys(node)[0];
+  console.log(start);
   const action = search.search(start, end, type);
   console.log(JSON.stringify(action));
   self.postMessage(action);

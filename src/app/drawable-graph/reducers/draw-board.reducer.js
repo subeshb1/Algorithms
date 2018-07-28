@@ -52,7 +52,7 @@ const listReducer = (
         ...state,
         node: {
           ...state.node,
-          [nkey]: { ...action.payload, key: nkey, color: "UNVISITED" }
+          [nkey]: { color: "UNVISITED", ...action.payload, key: nkey }
         }
       };
     case "DRAWABLE_LIST_START":
@@ -66,24 +66,36 @@ const listReducer = (
         end: action.payload
       };
     case "DRAWABLE_CLEAR":
+    case "DRAWABLE_LIST_DELETE_ALL":
       return {
         node: {},
         arc: {},
         start: undefined,
         end: undefined
       };
-    default:
-      return state;
-  }
-};
+    case "DRAWABLE_LIST_WHITE":
+      let node = { ...state.node };
+      Object.keys(node).map(x => (node[x].color = "UNVISITED"));
+      return {
+        ...state,
+        node
+      };
+    case "DRAWABLE_LIST_DELETE_NODE":
+      node = { ...state.node };
+      let arc = { ...state.arc };
+      Object.keys(arc).map(x => {
+        if (arc[x].from === action.payload || arc[x].to === action.payload) {
+          delete arc[x];
+        }
+        return x;
+      });
+      delete node[action.payload];
 
-export const isNew = (state = true, action) => {
-  switch (action.type) {
-    case "DRAWABLE_GENERATED":
-      return true;
-    case "DRAWABLE_FINISHED":
-    case "DRAWABLE_CANCELLED":
-      return false;
+      return { ...state, arc, node };
+    case "DRAWABLE_LIST_DELETE_ARC":
+      delete state.arc[action.payload];
+      return { ...state };
+
     default:
       return state;
   }
@@ -98,17 +110,6 @@ export const workerReducer = (state = null, action) => {
     case "DRAWABLE_CANCELLED":
       if (state) state.terminate();
       return null;
-    default:
-      return state;
-  }
-};
-
-export const isPressed = (state = false, action) => {
-  switch (action.type) {
-    case "DRAWABLE_PRESS":
-      return true;
-    case "DRAWABLE_RELEASE":
-      return false;
     default:
       return state;
   }
@@ -140,8 +141,6 @@ export default combineReducers({
   searching: isSearching,
   worker: workerReducer,
   list: listReducer,
-  new: isNew,
-  pressed: isPressed,
   action: actionReducer
 });
 
@@ -150,5 +149,4 @@ export const getDrawBoardState = state => {
   return state.drawable.draw;
 };
 export const getDrawBoardList = s => getDrawBoardState(s).list;
-export const getItemAt = (s, i) => s.graph.draw.list.graph[i];
 export const getDrawableAction = s => s.drawable.draw.action;

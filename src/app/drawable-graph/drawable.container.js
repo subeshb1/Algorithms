@@ -23,7 +23,7 @@ const getName = pathname =>
 let menuItems = links.map(item => ({
   className: "item",
   children: getName(item),
-  to: "/graph-search" + item
+  to: "/drawable-graph" + item
 }));
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {

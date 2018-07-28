@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, NavLink } from "react-router-dom";
 import "./App.css";
 import "./css/index.css";
-import { createComponent, createPortal } from "../lib";
+import { createComponent, createPortal } from "./lib";
 
 import Sorting from "./sorting";
 import Graph from "./graph-search";
