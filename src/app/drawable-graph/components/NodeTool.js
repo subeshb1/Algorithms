@@ -17,7 +17,10 @@ const Node = ({
   deleteSelected,
   end,
   setStart,
-  setEnd
+  algo,
+  distance,
+  setEnd,
+  h
 }) => {
   return (
     <React.Fragment>
@@ -74,6 +77,19 @@ const Node = ({
           />
         </label>
       </div>
+      {algo === "a-star" &&
+        !distance && (
+          <label>
+            Heuristic Value
+            <input
+              type="number"
+              value={h || 0}
+              onChange={({ target: { value } }) =>
+                change({ h: normalizedInt(value) })
+              }
+            />
+          </label>
+        )}
       <div className="group">
         <label className="checkbox">
           <input

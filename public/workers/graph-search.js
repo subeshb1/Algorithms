@@ -283,7 +283,7 @@ class AStar {
         const g = getDistance(q, v) + q.g;
         const f = h + g;
         const inClose = close[getPos(v.pos)];
-        if (!inClose) {
+        if (!inClose|| (inClose && inClose.f > f)) {
           const inOpen = detail[getPos(v.pos)];
           if (!inOpen || (inOpen && inOpen.f > f)) {
             open.push({ pos: v.pos, f, g, predecessor: q });

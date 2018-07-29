@@ -45,7 +45,7 @@ class ToolBarC extends Component {
               {...node[selected.item]}
               nkey={node[selected.item].key}
               change={onSelectedPropChange}
-              {...{ start, end, setStart, setEnd, deleteSelected }}
+              {...{ start, end, setStart, setEnd, deleteSelected,algo,distance }}
             />
           ) : (
             <ArcTool

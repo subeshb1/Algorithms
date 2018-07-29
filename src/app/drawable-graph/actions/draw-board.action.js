@@ -24,13 +24,14 @@ const run = data => async (dispatch, getState) => {
     if (!item.type) {
       node[item.key].color = item.color;
       // if (item.text) graph[item.pos].text = item.text;
-      action = {
-        type: "DRAWABLE_LIST_ACTION",
-        payload: { arc, node, start, end }
-      };
+      
     } else {
       arc[item.key].color = item.color;
     }
+    action = {
+      type: "DRAWABLE_LIST_ACTION",
+      payload: { arc, node, start, end }
+    };
     if (i % step === 0 || !step) {
       // eslint-disable-next-line
       await new Promise(resolve =>

@@ -3,6 +3,8 @@ class GraphController {
     this.graph = graph;
   }
   getDistance(u, v) {
+    u = this.at(u);
+    v = this.at(v);
     return parseInt(
       Math.pow(Math.pow(u.x - v.x, 2) + Math.pow(u.y - v.y, 2), 0.5),
       10
@@ -12,14 +14,11 @@ class GraphController {
     let arr = [];
     for (let key in this.graph.arc) {
       const arc = this.graph.arc[key];
-      console.log(arc.value, node);
       if (arc.from === node.key) {
         arr.push([
           this.at(arc.to),
           {
-            value: distance
-              ? this.getDistance(node, this.at(arc.to))
-              : arc.value,
+            value: distance ? this.getDistance(node.key, arc.to) : arc.value,
             through: arc.key
           }
         ]);
@@ -27,9 +26,7 @@ class GraphController {
         arr.push([
           this.at(arc.from),
           {
-            value: distance
-              ? this.getDistance(node, this.at(arc.from))
-              : arc.value,
+            value: distance ? this.getDistance(node.key, arc.from) : arc.value,
             through: arc.key
           }
         ]);
@@ -40,7 +37,6 @@ class GraphController {
   // this.graph.arc.forEach(arc => {
 
   at(pos) {
-    console.log(pos);
     return this.graph.node[pos];
   }
 }
@@ -198,7 +194,6 @@ class Dijkstras {
         },
         { d: Infinity }
       );
-      console.log(u);
       if (u.key === undefined) break;
       if (u.key === goal) {
         final = u;
@@ -235,7 +230,74 @@ class Dijkstras {
         path = path.predecessor;
       }
     }
-    console.log(action);
+    return action;
+  }
+}
+
+class AStar {
+  constructor(graph) {
+    this._graph = new GraphController(graph);
+  }
+  search(initial, goal = initial, distance, mode = 0) {
+    let start = this._graph.at(initial);
+    let detail = {};
+    let open = [{ key: start.key, f: 0, g: 0 }];
+    let close = {};
+    let final;
+    let action = [];
+    while (open.length) {
+      let q = open.reduce(
+        (acc, next, i) => {
+          if (next.f < acc.f) return { ...next, i };
+          return acc;
+        },
+        { f: Infinity, i: -1 }
+      );
+      if (q.i === -1) break;
+      if (q.key === goal) {
+        final = q;
+        break;
+      }
+      action.push({ key: q.key, color: "EXPLORED" });
+      open.splice(q.i, 1);
+      for (let v of this._graph.getAdjacent(q, mode, distance)) {
+        const { through, value } = v[1];
+        v = v[0];
+        const h = !distance ? v.h || 0 : this._graph.getDistance(v.key, goal);
+        const g = value + q.g;
+        const f = h + g;
+        console.log(f, g, h);
+
+        const inClose = close[v.key];
+        if (!inClose || (inClose && inClose.f > f)) {
+          const inOpen = detail[v.key];
+          if (!inOpen || (inOpen && inOpen.f > f)) {
+            open.push({ key: v.key, f, g, predecessor: q, through });
+            detail[v.key] = { key: v.key, f, g, predecessor: q, through };
+            action.push({
+              key: v.key,
+              color: "VISITED",
+              text: [
+                { text: f, offsetX: 0, offsetY: 2 },
+                { text: h, offsetX: 0, offsetY: 10 },
+                { text: g, offsetX: 6, offsetY: 10 }
+              ]
+            });
+          }
+        }
+      }
+      if (final) break;
+      close[q.key] = q;
+    }
+    if (final) {
+      let path = final;
+      while (path) {
+        action.push({ key: path.key, color: "PATH" });
+        if (path.through)
+          action.push({ key: path.through, color: "PATH", type: "ARC" });
+        path = path.predecessor;
+      }
+    }
     return action;
   }
 }
@@ -243,16 +305,15 @@ class Dijkstras {
 self.onmessage = ({
   data: [algo, { node, arc, start, end }, distance, type = 0]
 }) => {
-  console.log("I am here");
   if (!Object.keys(node).length) self.postMessage([]);
   let search;
   switch (algo) {
     case "dfs":
       search = new DepthFirstSearch({ node, arc });
       break;
-    // case "a-star":
-    //   search = new AStar(graph, row, col, type);
-    //   break;
+    case "a-star":
+      search = new AStar({ node, arc });
+      break;
     case "dijkstras":
       search = new Dijkstras({ node, arc });
       break;
@@ -260,7 +321,9 @@ self.onmessage = ({
       search = new BreadthFirstSearch({ node, arc });
   }
   if (node[start] === undefined) start = Object.keys(node)[0];
+  if (node[end] === undefined)
+    end = Object.keys(node)[Object.keys(node).length - 1];
   const action = search.search(start, end, distance, type);
-  console.log(JSON.stringify(action));
+  // console.log(JSON.stringify(action));
   self.postMessage(action);
 };
