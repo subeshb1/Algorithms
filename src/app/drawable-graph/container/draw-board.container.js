@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getDrawBoardState, getDrawableMode } from "../reducers";
+import { getDrawBoardState, getDrawableMode, getToolsState } from "../reducers";
 import { draw_action } from "../actions";
 import { Node, Arc } from "../components";
 
@@ -12,9 +12,11 @@ const DrawBoard = props => {
       action: { selected, isDrag, temp },
       searching
     },
+    tool: { distance },
     mode,
     onNodePress,
-    onArcPress
+    onArcPress,
+    algo
   } = props;
   return (
     <div className="drawboard draw-drawboard">
@@ -36,7 +38,10 @@ const DrawBoard = props => {
             cursor: ${mode === 0 ? "move" : mode === 2 ? "pointer" : ""}
             }
 
-
+            line.PATH{
+              stroke:#00a25d;
+              stroke-width:4px;
+            }
             circle.UNVISITED {
               fill: white;
             }
@@ -47,7 +52,7 @@ const DrawBoard = props => {
               fill:  ${loading ? "white" : "#00b3ca"};
             }
             circle.PATH {
-              fill:  ${loading ? "white" : "#4adb4c"};
+              fill:  ${loading ? "white" : "#50f5ae"};
             }
             circle.BLOCK {
               fill:  ${loading ? "white" : "#c1c1c1"};
@@ -95,7 +100,7 @@ const DrawBoard = props => {
           !loading && !searching && isDrag && props.onNodeMove(e)
         }
       >
-        {Object.values(arc).map(({ from, to, key }) => (
+        {Object.values(arc).map(({ from, value, to, key, color }) => (
           <Arc
             x1={node[from].x}
             y1={node[from].y}
@@ -106,7 +111,11 @@ const DrawBoard = props => {
               onArcPress,
               show: !loading && !searching,
               selected,
-              mode
+              mode,
+              value,
+              distance,
+              algo,
+              color
             }}
             key={key}
           />
@@ -136,7 +145,8 @@ const DrawBoard = props => {
 };
 const mapStateToProps = state => ({
   draw: getDrawBoardState(state),
-  mode: getDrawableMode(state)
+  mode: getDrawableMode(state),
+  tool: getToolsState(state)
 });
 
 export default connect(

@@ -15,9 +15,9 @@ const toolBarReducer = (
     case "TOOL_MODE":
       return { ...state, mode: extractData(action.payload) };
     case "TOOL_STEP":
-      return { ...state, step: extractData(action.payload,1) };
+      return { ...state, step: extractData(action.payload) };
     case "TOOL_INTERVAL":
-      return { ...state, interval: extractData(action.payload) };
+      return { ...state, interval: extractData(action.payload,1) };
     default:
       return state;
   }

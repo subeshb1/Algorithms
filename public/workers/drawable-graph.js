@@ -2,22 +2,40 @@ class GraphController {
   constructor(graph) {
     this.graph = graph;
   }
-
-  getAdjacent(node, mode = 0) {
+  getDistance(u, v) {
+    return parseInt(
+      Math.pow(Math.pow(u.x - v.x, 2) + Math.pow(u.y - v.y, 2), 0.5),
+      10
+    );
+  }
+  getAdjacent(node, mode = 0, distance = 0) {
     let arr = [];
     for (let key in this.graph.arc) {
       const arc = this.graph.arc[key];
+      console.log(arc.value, node);
       if (arc.from === node.key) {
-        arr.push(arc.to);
+        arr.push([
+          this.at(arc.to),
+          {
+            value: distance
+              ? this.getDistance(node, this.at(arc.to))
+              : arc.value,
+            through: arc.key
+          }
+        ]);
       } else if (arc.to === node.key && mode === 0) {
-        arr.push(arc.from);
+        arr.push([
+          this.at(arc.from),
+          {
+            value: distance
+              ? this.getDistance(node, this.at(arc.from))
+              : arc.value,
+            through: arc.key
+          }
+        ]);
       }
     }
-    return arr
-      .map(pos => {
-        return this.at(pos);
-      })
-      .sort((a, b) => a.x >= b.x);
+    return arr.sort((a, b) => a[0].x >= b[0].x);
   }
   // this.graph.arc.forEach(arc => {
 
@@ -31,7 +49,7 @@ class BreadthFirstSearch {
   constructor(graph) {
     this._graph = new GraphController(graph);
   }
-  search(initial, goal, mode = 0) {
+  search(initial, goal, distance, mode = 0) {
     let start = this._graph.at(initial);
     let action = [];
     start.color = "VISITED";
@@ -55,9 +73,12 @@ class BreadthFirstSearch {
       }
 
       for (let v of this._graph.getAdjacent(u, mode)) {
+        const { through } = v[1];
+        v = v[0];
         if (v.color === "UNVISITED") {
           v.color = "VISITED";
           v.predecessor = u;
+          v.through = through;
           v.d = u.d + 10;
           action.push({
             key: v.key,
@@ -77,6 +98,8 @@ class BreadthFirstSearch {
       let path = final;
       while (path) {
         action.push({ key: path.key, color: "PATH" });
+        if (path.through)
+          action.push({ key: path.through, color: "PATH", type: "ARC" });
         path = path.predecessor;
       }
     }
@@ -88,7 +111,7 @@ class DepthFirstSearch {
   constructor(graph) {
     this._graph = new GraphController(graph);
   }
-  search(initial, goal, mode = 0) {
+  search(initial, goal, distance, mode = 0) {
     this.mode = mode;
     this.goal = goal;
     this.action = [];
@@ -100,6 +123,8 @@ class DepthFirstSearch {
       let path = this.final;
       while (path) {
         this.action.push({ key: path.key, color: "PATH" });
+        if (path.through)
+          this.action.push({ key: path.through, color: "PATH", type: "ARC" });
         path = path.predecessor;
       }
     }
@@ -125,9 +150,12 @@ class DepthFirstSearch {
       text: [{ text: u.d, offsetX: 0, offsetY: 2 }]
     });
     for (let v of this._graph.getAdjacent(u, this.mode)) {
+      const { through } = v[1];
+      v = v[0];
       if (this.final) return;
       if (v.color === "UNVISITED") {
         v.predecessor = u;
+        v.through = through;
         this.dfs(v);
       }
     }
@@ -146,7 +174,75 @@ class DepthFirstSearch {
   }
 }
 
-self.onmessage = ({ data: [algo, { node, arc, start, end }, type = 0] }) => {
+class Dijkstras {
+  constructor(graph) {
+    this._graph = new GraphController(graph);
+  }
+  search(initial, goal, distance, mode = 0) {
+    const getDistance = this._graph.getDistance.bind(this._graph);
+    Object.keys(this._graph.graph.node).forEach(x => {
+      this._graph.graph.node[x].d = Infinity;
+      this._graph.graph.node[x].predecessor = null;
+    });
+    let start = this._graph.at(initial);
+    start.d = 0;
+    let action = [];
+    const queue = { ...this._graph.graph.node };
+    const s = [];
+    let final;
+    while (Object.keys(queue).length !== s.length) {
+      let u = Object.keys(queue).reduce(
+        (acc, next) => {
+          if (queue[next].d < acc.d && !queue[next].visit) return queue[next];
+          return acc;
+        },
+        { d: Infinity }
+      );
+      console.log(u);
+      if (u.key === undefined) break;
+      if (u.key === goal) {
+        final = u;
+        break;
+      }
+      u.visit = true;
+      s.push(u);
+      action.push({ key: u.key, color: "EXPLORED" });
+      for (let v of this._graph.getAdjacent(u, mode, distance)) {
+        const { through, value } = v[1];
+        const dis = u.d + value;
+        v = v[0];
+        if (v.d > dis) {
+          v.d = dis;
+          v.predecessor = u;
+          v.through = through;
+          action.push({
+            key: v.key,
+            color: "VISITED",
+            text: [
+              { text: u.key, offsetX: 0, offsetY: 2 },
+              { text: v.d, offsetX: 0, offsetY: 10 }
+            ]
+          });
+        }
+      }
+    }
+    if (final) {
+      let path = final;
+      while (path) {
+        action.push({ key: path.key, color: "PATH" });
+        if (path.through)
+          action.push({ key: path.through, color: "PATH", type: "ARC" });
+        path = path.predecessor;
+      }
+    }
+    console.log(action);
+    return action;
+  }
+}
+
+self.onmessage = ({
+  data: [algo, { node, arc, start, end }, distance, type = 0]
+}) => {
   console.log("I am here");
   if (!Object.keys(node).length) self.postMessage([]);
   let search;
@@ -157,15 +253,14 @@ self.onmessage = ({ data: [algo, { node, arc, start, end }, type = 0] }) => {
     // case "a-star":
     //   search = new AStar(graph, row, col, type);
     //   break;
-    // case "dijkstras":
-    //   search = new Dijkstras(graph, row, col, type);
-    //   break;
+    case "dijkstras":
+      search = new Dijkstras({ node, arc });
+      break;
     default:
       search = new BreadthFirstSearch({ node, arc });
   }
   if (node[start] === undefined) start = Object.keys(node)[0];
-  console.log(start);
-  const action = search.search(start, end, type);
+  const action = search.search(start, end, distance, type);
   console.log(JSON.stringify(action));
   self.postMessage(action);
 };

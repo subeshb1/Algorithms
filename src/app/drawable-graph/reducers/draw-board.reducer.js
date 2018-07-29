@@ -44,7 +44,10 @@ const listReducer = (
       let akey = action.key !== undefined ? action.key : arcKey++;
       return {
         ...state,
-        arc: { ...state.arc, [akey]: { ...action.payload, key: akey } }
+        arc: {
+          ...state.arc,
+          [akey]: { value: 1, ...action.payload, key: akey }
+        }
       };
     case "DRAWABLE_LIST_ADD_NODE":
       let nkey = action.key !== undefined ? action.key : nodeKey++;
@@ -76,6 +79,7 @@ const listReducer = (
     case "DRAWABLE_LIST_WHITE":
       let node = { ...state.node };
       Object.keys(node).map(x => (node[x].color = "UNVISITED"));
+      Object.keys(state.arc).map(x => (state.arc[x].color = "UNVISITED"));
       return {
         ...state,
         node

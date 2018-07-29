@@ -1,7 +1,21 @@
 import React from "react";
 const euclideanDistance = (x1, x2, y1, y2) =>
   parseInt(Math.pow(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2), 0.5), 10);
-const Arc = ({ x1, x2, y1, y2, mode, nkey, show, selected, onArcPress }) => {
+const Arc = ({
+  x1,
+  x2,
+  y1,
+  y2,
+  mode,
+  nkey,
+  show,
+  distance,
+  algo,
+  selected,
+  onArcPress,
+  color,
+  value
+}) => {
   let dx = (x1 + x2) / 2;
   let dy = (y1 + y2) / 2;
   let angle = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
@@ -12,9 +26,11 @@ const Arc = ({ x1, x2, y1, y2, mode, nkey, show, selected, onArcPress }) => {
         stroke="black"
         strokeWidth="2"
         className={
-          selected && selected.type === "ARC" && selected.item === nkey
+          (selected && selected.type === "ARC" && selected.item === nkey
             ? "selected"
-            : ""
+            : "") +
+            " " +
+            color || ""
         }
       />
       <text
@@ -23,7 +39,11 @@ const Arc = ({ x1, x2, y1, y2, mode, nkey, show, selected, onArcPress }) => {
         fontSize={20}
         transform={`rotate(${angle},${dx},${dy})`}
       >
-        {euclideanDistance(x1, x2, y1, y2)}
+        {algo === "bfs" || algo === "dfs"
+          ? 1
+          : distance
+            ? euclideanDistance(x1, x2, y1, y2)
+            : value}
       </text>
     </g>
   );

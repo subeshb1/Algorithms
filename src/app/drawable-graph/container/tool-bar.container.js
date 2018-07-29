@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getToolsState, getDrawBoardState } from "../reducers";
 import { tools_action, draw_action } from "../actions";
-import {NodeTool, ArcTool} from '../components'
+import { NodeTool, ArcTool } from "../components";
 class ToolBarC extends Component {
   componentDidUpdate({ algo }) {
     if (algo !== this.props.algo) {
@@ -27,7 +27,8 @@ class ToolBarC extends Component {
       setStart,
       setEnd,
       deleteSelected,
-      deleteAll
+      deleteAll,
+      onSelectedPropChange
     } = props;
     return (
       <div className="tool-bar draw-tool-bar" key={"#2"}>
@@ -43,7 +44,7 @@ class ToolBarC extends Component {
             <NodeTool
               {...node[selected.item]}
               nkey={node[selected.item].key}
-              change={props.onSelectedPropChange}
+              change={onSelectedPropChange}
               {...{ start, end, setStart, setEnd, deleteSelected }}
             />
           ) : (
@@ -51,7 +52,13 @@ class ToolBarC extends Component {
               from={{ ...node[arc[selected.item].from] }}
               to={{ ...node[arc[selected.item].to] }}
               id={selected.item}
-              deleteSelected={deleteSelected}
+              {...{
+                onSelectedPropChange,
+                deleteSelected,
+                distance,
+                value: arc[selected.item].value,
+                algo
+              }}
             />
           )
         ) : (
@@ -78,7 +85,7 @@ class ToolBarC extends Component {
                 type="checkbox"
                 checked={distance}
                 onChange={props.changeDistance}
-                disabled={loading || searching}
+                disabled={loading || searching || algo==="bfs" || algo==="dfs"}
               />
               Use calculated Distance
             </label>

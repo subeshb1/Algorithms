@@ -9,7 +9,7 @@ export const changeInterval = payload => ({
 });
 
 export const changeDistance = payload => ({
-  type: "DRAWABLE_TOOL_DIAGONAL",
+  type: "DRAWABLE_TOOL_DISTANCE",
   payload
 });
 

@@ -1,6 +1,6 @@
 const normalize = x => Math.abs(parseInt(x, 10));
 const extractData = (e, m = 1000) =>
-  Math.min(normalize(e.target.value, 10), m) || "";
+  Math.min(normalize(e.target.value), m) || "";
 
 const toolBarReducer = (
   state = {

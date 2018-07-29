@@ -21,13 +21,16 @@ const run = data => async (dispatch, getState) => {
       draw: { searching }
     } = getDrawable(getState());
     if (!searching) return;
-    node[item.key].color = item.color;
-    // if (item.text) graph[item.pos].text = item.text;
-    action = {
-      type: "DRAWABLE_LIST_ACTION",
-      payload: { arc, node, start, end }
-    };
-
+    if (!item.type) {
+      node[item.key].color = item.color;
+      // if (item.text) graph[item.pos].text = item.text;
+      action = {
+        type: "DRAWABLE_LIST_ACTION",
+        payload: { arc, node, start, end }
+      };
+    } else {
+      arc[item.key].color = item.color;
+    }
     if (i % step === 0 || !step) {
       // eslint-disable-next-line
       await new Promise(resolve =>
@@ -58,20 +61,19 @@ export const processList = algo => (dispatch, getState) => {
     payload: "/workers/drawable-graph.js"
   });
   const {
-    draw: { worker, list }
+    draw: { worker, list },
+    tool: { distance }
   } = getDrawable(getState());
   worker.onmessage = e => {
     dispatch({ type: "DRAWABLE_LIST_PROCESSED" });
     dispatch(run(e.data));
   };
-  worker.postMessage([algo, list]);
+  worker.postMessage([algo, list, distance]);
 };
 
 export const cancel = () => ({ type: "DRAWABLE_CANCELLED" });
 
-
 export const clearColor = i => ({ type: "DRAWABLE_LIST_WHITE" });
-
 
 const getOffset = e => {
   const { left: x, top: y } = e.currentTarget.getBoundingClientRect();
@@ -196,14 +198,19 @@ export const onSelectedPropChange = prop => (dispatch, getState) => {
   const {
     selected: { type, item }
   } = getDrawableAction(state);
-  const { node } = getDrawBoardList(state);
+  const { node, arc } = getDrawBoardList(state);
   if (type === "NODE") {
     dispatch({
       type: "DRAWABLE_LIST_ADD_NODE",
       key: item,
       payload: { ...node[item], ...prop }
     });
-  }
+  } else
+    dispatch({
+      type: "DRAWABLE_LIST_ADD_ARC",
+      key: item,
+      payload: { ...arc[item], ...prop }
+    });
 };
 
 export const setStart = key => (dispatch, getState) => {

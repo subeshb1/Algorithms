@@ -27,15 +27,13 @@ let menuItems = links.map(item => ({
 }));
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
+  const algo = getAlgoFromPath(pathname.replace(path, ""));
   return (
     <div className="container">
       <Menu className="menu" items={menuItems} />
       <IconBar />
-      <DrawBoard />
-      <ToolBar
-        algo={getAlgoFromPath(pathname.replace(path, ""))}
-        className="tool-bar draw-tool-bar"
-      />
+      <DrawBoard algo={algo} />
+      <ToolBar algo={algo} className="tool-bar draw-tool-bar" />
     </div>
   );
 };
