@@ -7,6 +7,7 @@ import { createComponent, createPortal } from "./lib";
 import Sorting from "./sorting";
 import Graph from "./graph-search";
 import DrawableGraph from "./drawable-graph";
+import Home from "./home";
 
 const Header = createPortal(document.getElementById("header"), "Header");
 const Footer = createPortal(document.getElementById("footer"), "Footer");
@@ -24,7 +25,7 @@ class App extends Component {
               <img src="/logo.svg" alt="" />
               <a>Algorithms</a>
             </NavItem>
-            <NavItem as="a">Home</NavItem>
+            <NavItem as={NavLink} to="/" exact>Home</NavItem>
             <NavItem as={NavLink} to="/sorting">
               Sorting
             </NavItem>
@@ -37,6 +38,7 @@ class App extends Component {
           </Navbar>
         </Header>
 
+        <Route path="/"  exact component={Home} />
         <Route path="/sorting" component={Sorting} />
         <Route path="/graph-search" component={Graph} />
         <Route path="/drawable-graph" component={DrawableGraph} />

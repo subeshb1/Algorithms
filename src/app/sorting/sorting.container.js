@@ -40,11 +40,13 @@ let menuItems = links.map(item => ({
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
   return (
-    <div className="container">
-      <Menu className="menu" items={menuItems} />
-      <DrawBoard />
-      <ToolBar algo={getAlgoFromPath(pathname.replace(path, ""))} />
-    </div>
+    <React.Fragment>
+      <div className="container">
+        <Menu className="menu" items={menuItems} />
+        <DrawBoard />
+        <ToolBar algo={getAlgoFromPath(pathname.replace(path, ""))} />
+      </div>
+    </React.Fragment>
   );
 };
 
