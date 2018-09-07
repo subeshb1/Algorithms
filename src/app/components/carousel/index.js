@@ -15,13 +15,13 @@ export default class Carousel extends Component {
   }
 
   makeInterval() {
-    // this.interval = setInterval(() => {
-    //   const { items = [], children } = this.props;
-    //   const slideSize = items.length + React.Children.count(children);
-    //   this.setState(({ current }) => ({
-    //     current: (current - 1) % slideSize
-    //   }));
-    // }, this.props.interval || 5000);
+    this.interval = setInterval(() => {
+      const { items = [], children } = this.props;
+      const slideSize = items.length + React.Children.count(children);
+      this.setState(({ current }) => ({
+        current: (current - 1) % slideSize
+      }));
+    }, this.props.interval || 5000);
   }
   componentDidMount() {
     this.makeInterval();
@@ -68,38 +68,38 @@ export default class Carousel extends Component {
               });
             })}
           </div>
-          <div
-            className={` ${vertical ? "vertical " : "horizontal"} previous`}
-            onClick={() => {
-              clearInterval(this.interval);
+          <div className={` ${vertical ? "vertical " : "horizontal"} previous`}>
+            <span
+              className="arrow"
+              onClick={() => {
+                clearInterval(this.interval);
 
-              this.setState(
-                ({ current }) => ({
-                  current: Math.min(current + 1, 0)
-                }),
-                () => {
-                  this.makeInterval();
-                }
-              );
-            }}
-          >
-            <span className="arrow" />
+                this.setState(
+                  ({ current }) => ({
+                    current: Math.min(current + 1, 0)
+                  }),
+                  () => {
+                    this.makeInterval();
+                  }
+                );
+              }}
+            />
           </div>
-          <div
-            className={` ${vertical ? "vertical " : "horizontal"} next`}
-            onClick={() => {
-              clearInterval(this.interval);
-              this.setState(
-                ({ current }) => ({
-                  current: (current - 1) % slideSize
-                }),
-                () => {
-                  this.makeInterval();
-                }
-              );
-            }}
-          >
-            <span className="arrow" />
+          <div className={` ${vertical ? "vertical " : "horizontal"} next`}>
+            <span
+              className="arrow"
+              onClick={() => {
+                clearInterval(this.interval);
+                this.setState(
+                  ({ current }) => ({
+                    current: (current - 1) % slideSize
+                  }),
+                  () => {
+                    this.makeInterval();
+                  }
+                );
+              }}
+            />
           </div>
           <div
             className={` ${

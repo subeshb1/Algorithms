@@ -29,7 +29,10 @@
 .slides img {
   max-width: 100%;
 }
-
+.carousel .next,
+.carousel .previous {
+  pointer-events: none;
+}
 .carousel .next,
 .carousel .previous,
 .carousel .indicators {
@@ -51,6 +54,7 @@
   right: 0;
 }
 .carousel .arrow {
+  pointer-events: all;
   width: 24px;
   height: 24px;
   border-radius: 100%;
