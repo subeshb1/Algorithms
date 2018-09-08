@@ -1,3 +1,6 @@
+@import url("slide.css");
+@import url("section.css");
+
 .home-wrapper {
   background-color: #fff;
 }
@@ -6,54 +9,4 @@
   position: relative;
   top: 20px;
   text-align: center;
-}
-
-/* Courses Cards */
-.cards {
-  display: grid;
-  position: relative;
-  max-width: 1024px;
-  top: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  justify-items: center;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  max-width: 150px;
-  box-shadow: 0 0 13px 0px #cdcdcd;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  background: white;
-}
-.card .image {
-  overflow: hidden;
-  max-height: 200px;
-}
-.card .image img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-.card .description {
-  font-size: 0.8rem;
-  padding: 10px;
-}
-
-.card .description .heading {
-  font-weight: bolder;
-  font-size: 1.2em;
-}
-
-h1 img {
-  width: 50px;
-}
-
-@media (min-width: 600px) {
-  .cards {
-    padding-top: 50px;
-    margin: 0 auto;
-  }
-  
 }

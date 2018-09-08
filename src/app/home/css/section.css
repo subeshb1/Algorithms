@@ -1,0 +1,30 @@
+p {
+  font-family: "Noto Serif JP", sans-serif;
+}
+p img {
+  float: left;
+  max-width: 150px;
+  margin: 10px;
+}
+p::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+article {
+  padding: 10px;
+}
+
+.section {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  p img {
+    /* max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    float: unset; */
+  }
+}

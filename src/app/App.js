@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, NavLink } from "react-router-dom";
+import { Route, NavLink, Link, Switch } from "react-router-dom";
 import "./App.css";
 import "./css/index.css";
 import { createComponent, createPortal } from "./lib";
@@ -14,6 +14,12 @@ const Footer = createPortal(document.getElementById("footer"), "Footer");
 const Navbar = createComponent("nav", { className: "navbar" });
 const NavItem = createComponent("div", { className: "item" });
 
+const NoContent = () => (
+  <h1>
+    Page Not Found. Click <Link to="/" style={{color:"blue"}}>Here</Link> to Go Back.
+  </h1>
+);
+
 class App extends Component {
   render() {
     return (
@@ -25,7 +31,9 @@ class App extends Component {
               <img src="/logo.svg" alt="" />
               <a>Algorithms</a>
             </NavItem>
-            <NavItem as={NavLink} to="/" exact>Home</NavItem>
+            <NavItem as={NavLink} to="/" exact>
+              Home
+            </NavItem>
             <NavItem as={NavLink} to="/sorting">
               Sorting
             </NavItem>
@@ -37,12 +45,13 @@ class App extends Component {
             </NavItem>
           </Navbar>
         </Header>
-
-        <Route path="/"  exact component={Home} />
-        <Route path="/sorting" component={Sorting} />
-        <Route path="/graph-search" component={Graph} />
-        <Route path="/drawable-graph" component={DrawableGraph} />
-
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/sorting" component={Sorting} />
+          <Route path="/graph-search" component={Graph} />
+          <Route path="/drawable-graph" component={DrawableGraph} />
+          <Route component={NoContent} />
+        </Switch>
         <Footer>&copy;Copyright Subesh Bhandari</Footer>
       </React.Fragment>
     );

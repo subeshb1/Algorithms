@@ -16,6 +16,8 @@ body {
 .navbar {
   display: flex;
   background-color: var(--theme-background);
+  position: relative;
+  box-shadow: 0 0 6px 2px #929292;
 }
 
 .navbar > .item {
