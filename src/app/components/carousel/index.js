@@ -43,7 +43,15 @@ export default class Carousel extends Component {
     const slideSize = items.length + React.Children.count(children);
     return (
       <React.Fragment>
-        <div className="carousel" style={{ width: "100%", height }}>
+        <div
+          className="carousel"
+          style={{ width: "100%", height }}
+          onMouseMove={() => {
+            clearInterval(this.interval);
+            this.makeInterval();
+          }}
+        >
+          {/* <div className="progress" /> */}
           <div
             className="slides"
             style={{ transform: ` ${transform}(${current * 100}%)` }}

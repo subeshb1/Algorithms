@@ -22,11 +22,13 @@ import discoverySVG from "../../assets/svg/discovery.svg";
 import implementSVG from "../../assets/svg/implement.svg";
 import offlineSVG from "../../assets/svg/offline.svg";
 import crossPlatformSVG from "../../assets/svg/cross-platform.svg";
+import userFriendlySVG from "../../assets/svg/user-friendly.svg";
+import interactiveSVG from "../../assets/svg/interactive.svg";
 
 export default class Slide extends Component {
   render() {
     return (
-      <Carousel height={"90vh"} interval={10000}>
+      <Carousel height={"90vh"} interval={5000}>
         <Carousel.Slide>
           <div className="welcome">
             <h1 style={{ fontSize: "1.3em" }}>Welcome To Simple Algorithms </h1>
@@ -76,7 +78,7 @@ export default class Slide extends Component {
               <div className="card">
                 <div className="image">
                   <img
-                    src="http://svgjs.com/assets/images/logo-svg-js-01d.png"
+                    src={interactiveSVG}
                     alt=""
                   />
                 </div>
@@ -86,10 +88,7 @@ export default class Slide extends Component {
               </div>
               <div className="card">
                 <div className="image">
-                  <img
-                    src="http://www.idoxsoft.com/wp-content/uploads/2016/04/User-Interface.png"
-                    alt=""
-                  />
+                  <img src={userFriendlySVG} alt="" />
                 </div>
                 <div className="description">
                   <div className="heading">User Friendly UI</div>
