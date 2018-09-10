@@ -7,7 +7,7 @@ export default class Section extends Component {
   render() {
     return (
       <div className="section">
-        <article id="Simple Algorithms">
+        <article id="simple-algorithms">
           <h2>Simple Algorithms</h2>
           <article id="learn">
             <h3>Learn</h3>
