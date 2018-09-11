@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+  <url>
+    <loc>https://www.subeshb1.com.np/</loc>
+  </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/bubble-sort</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/merge-sort</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/quick-sort</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/heap-sort</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/sorting/selection-sort</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/graph-search/</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/graph-search/bfs</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/graph-search/dfs</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/graph-search/a-star</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/graph-search/dijkstras</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/drawable-graph/</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/drawable-graph/bfs</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/drawable-graph/dfs</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/drawable-graph/a-star</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/drawable-graph/dijkstras</loc> </url>
+</urlset>
