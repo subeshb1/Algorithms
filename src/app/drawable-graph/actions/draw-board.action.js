@@ -6,6 +6,8 @@ import {
   getDrawBoardList
 } from "../reducers";
 
+import { drawable } from "../../workers";
+
 const run = data => async (dispatch, getState) => {
   let i = 0;
 
@@ -23,7 +25,6 @@ const run = data => async (dispatch, getState) => {
     if (!searching) return;
     if (!item.type) {
       node[item.key].color = item.color;
-      // if (item.text) graph[item.pos].text = item.text;
       
     } else {
       arc[item.key].color = item.color;
@@ -59,7 +60,7 @@ export const processList = algo => (dispatch, getState) => {
   });
   dispatch({
     type: "DRAWABLE_LIST_PROCESS",
-    payload: "/workers/drawable-graph.js"
+    payload: drawable
   });
   const {
     draw: { worker, list },

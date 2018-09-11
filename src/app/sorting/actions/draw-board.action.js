@@ -1,4 +1,7 @@
-import {getSorting} from '../reducers';
+import { getSorting } from "../reducers";
+
+import { algo,generate } from "../../workers";
+
 const sortList = data => async (dispatch, getState) => {
   let i = 0;
   const {
@@ -22,7 +25,6 @@ const sortList = data => async (dispatch, getState) => {
       default:
         break;
     }
-
     if (i % step === 0 || !step) {
       await new Promise(resolve =>
         setTimeout(() => {
@@ -40,6 +42,7 @@ const sortList = data => async (dispatch, getState) => {
         }, interval)
       );
       i = 0;
+      
     }
 
     i++;
@@ -48,7 +51,7 @@ const sortList = data => async (dispatch, getState) => {
 };
 
 export const generateList = () => (dispatch, getState) => {
-  dispatch({ type: "LIST_GENERATE", payload: "/workers/generate.js" });
+  dispatch({ type: "LIST_GENERATE", payload: generate });
   const {
     draw: { worker },
     tool: { size, mode }
@@ -61,8 +64,8 @@ export const generateList = () => (dispatch, getState) => {
   };
   worker.postMessage([size, mode]);
 };
-export const processList = algo => (dispatch, getState) => {
-  dispatch({ type: "LIST_PROCESS", payload: "/workers/algo.js" });
+export const processList = algorithm => (dispatch, getState) => {
+  dispatch({ type: "LIST_PROCESS", payload: algo });
   const {
     draw: { worker, list }
   } = getSorting(getState());
@@ -70,7 +73,7 @@ export const processList = algo => (dispatch, getState) => {
     dispatch({ type: "LIST_PROCESSED" });
     dispatch(sortList(e.data));
   };
-  worker.postMessage([algo, list]);
+  worker.postMessage([algorithm, list]);
 };
 
 export const cancel = () => ({ type: "CANCELLED" });

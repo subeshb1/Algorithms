@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import WebWorker from "../../web-worker";
 
 let nodeKey = 0;
 let arcKey = 0;
@@ -108,7 +109,7 @@ const listReducer = (
 export const workerReducer = (state = null, action) => {
   switch (action.type) {
     case "DRAWABLE_LIST_PROCESS":
-      return new Worker(action.payload);
+      return new WebWorker(action.payload);
     case "DRAWABLE_LIST_GENERATED":
     case "DRAWABLE_LIST_PROCESSED":
     case "DRAWABLE_CANCELLED":

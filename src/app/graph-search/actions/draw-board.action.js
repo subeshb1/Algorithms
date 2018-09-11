@@ -1,4 +1,6 @@
 import { getGraph } from "../reducers";
+import { generateGraph, graphSearch } from "../../workers";
+
 const sortList = data => async (dispatch, getState) => {
   let i = 0;
   let action = { type: "NULL" };
@@ -51,7 +53,7 @@ const sortList = data => async (dispatch, getState) => {
 export const generateList = () => (dispatch, getState) => {
   dispatch({
     type: "GRAPH_LIST_GENERATE",
-    payload: "/workers/generate-graph.js"
+    payload: generateGraph
   });
   const {
     draw: {
@@ -70,7 +72,7 @@ export const generateList = () => (dispatch, getState) => {
 };
 export const processList = algo => (dispatch, getState) => {
   dispatch({ type: "GRAPH_LIST_WHITE" });
-  dispatch({ type: "GRAPH_LIST_PROCESS", payload: "/workers/graph-search.js" });
+  dispatch({ type: "GRAPH_LIST_PROCESS", payload: graphSearch });
   const {
     draw: { worker, list },
     tool: { start, end, diagonal }
