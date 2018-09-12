@@ -2,13 +2,16 @@ import React, { Component } from "react";
 import "./css/index.css";
 import { DrawBoard, ToolBar } from "./containers";
 import Menu from "../components/menu";
+import { Snake } from "./statefulComponents";
+import {
+  Route
+} from 'react-router-dom'
+import SnakeTut from "./components/snake-tut";
 
-const links = ["/bfs", "/dfs", "/a-star", "/dijkstras"];
+const links = ["/snake-game"];
 
 const getAlgoFromPath = pathname => {
-  const algo = pathname.slice(1);
-  if (algo !== "dfs" && algo !== "a-star" && algo !== "dijkstras") return "bfs";
-  return algo;
+  return "snake-game";
 };
 
 const getName = pathname =>
@@ -21,17 +24,22 @@ const getName = pathname =>
 let menuItems = links.map(item => ({
   className: "item",
   children: getName(item),
-  to: "/graph-search" + item
+  to: "/games" + item
 }));
 
-export default class index extends Component {
+export default class Games extends Component {
   render() {
     return (
-      <div className="container">
-        <Menu className="menu" items={menuItems} />
-        <DrawBoard />
-        <ToolBar />
-      </div>
+      <React.Fragment>
+        <div className="container">
+          <Menu className="menu" items={menuItems} />
+          <Route path='/games/snake-game' component={Snake}/>
+        </div>
+        <div className="home-wrapper">
+          <Route path='/games/snake-game' component={SnakeTut}/>
+          
+        </div>
+      </React.Fragment>
     );
   }
 }

@@ -6,3 +6,5 @@ export const snakeState = (state = {}, action) => {
             return state
     }
 }
+
+
