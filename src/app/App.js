@@ -3,11 +3,7 @@ import { Route, NavLink, Link, Switch } from "react-router-dom";
 import "./App.css";
 import "./css/index.css";
 import { createComponent, createPortal } from "./lib";
-
-import Sorting from "./sorting";
-import Graph from "./graph-search";
-import DrawableGraph from "./drawable-graph";
-import Home from "./home";
+import { Sorting, DrawableGraph, Graph, Home,Games } from "./containers";
 
 const Header = createPortal(document.getElementById("header"), "Header");
 const Footer = createPortal(document.getElementById("footer"), "Footer");
@@ -16,7 +12,11 @@ const NavItem = createComponent("div", { className: "item" });
 
 const NoContent = () => (
   <h1>
-    Page Not Found. Click <Link to="/" style={{color:"blue"}}>Here</Link> to Go Back.
+    Page Not Found. Click{" "}
+    <Link to="/" style={{ color: "blue" }}>
+      Here
+    </Link>{" "}
+    to Go Back.
   </h1>
 );
 
@@ -43,6 +43,9 @@ class App extends Component {
             <NavItem as={NavLink} to="/drawable-graph">
               Drawable Graph
             </NavItem>
+            <NavItem as={NavLink} to="/games">
+              Games
+            </NavItem>
           </Navbar>
         </Header>
         <Switch>
@@ -50,6 +53,7 @@ class App extends Component {
           <Route path="/sorting" component={Sorting} />
           <Route path="/graph-search" component={Graph} />
           <Route path="/drawable-graph" component={DrawableGraph} />
+          <Route path="/games" component={Games} />
           <Route component={NoContent} />
         </Switch>
         <Footer>&copy;Copyright Subesh Bhandari</Footer>
