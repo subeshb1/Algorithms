@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
   <url>
-    <loc>https://www.subeshb1.com.np/</loc>
+    <loc>https://www.subeshb1.com.np</loc>
   </url>
   <url> <loc>https://www.subeshb1.com.np/sorting/</loc> </url>
   <url> <loc>https://www.subeshb1.com.np/sorting/bubble-sort</loc> </url>
@@ -19,4 +19,6 @@
   <url> <loc>https://www.subeshb1.com.np/drawable-graph/dfs</loc> </url>
   <url> <loc>https://www.subeshb1.com.np/drawable-graph/a-star</loc> </url>
   <url> <loc>https://www.subeshb1.com.np/drawable-graph/dijkstras</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/games/</loc> </url>
+  <url> <loc>https://www.subeshb1.com.np/games/snake-game</loc> </url>
 </urlset>
