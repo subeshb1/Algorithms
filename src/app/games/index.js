@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./css/index.css";
-import { DrawBoard, ToolBar } from "./containers";
 import Menu from "../components/menu";
 import { Snake } from "./statefulComponents";
 import {

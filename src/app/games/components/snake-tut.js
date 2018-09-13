@@ -1,9 +1,31 @@
 import React, { Component } from "react";
 
+import { Helmet } from "react-helmet";
+
+class Head extends Component {
+  render() {
+    return (
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Snake Game - Tutorial</title>
+        <meta
+          name="description"
+          content="Learn how to make a Simple Snake Games using several programming languages. Follow the step by step process to build your own Snake Game."
+        />
+        <meta
+          name="keyword"
+          content="snake game using js, snake game using c++, snake game using java, snake game tutorial, tutorial, learn simple, easy, free tutorial"
+        />
+      </Helmet>
+    );
+  }
+}
+
 export default class SnakeTut extends Component {
   render() {
     return (
       <div>
+        <Head />
         <article className="section">
           <h1>Snake Game</h1>
           <article>

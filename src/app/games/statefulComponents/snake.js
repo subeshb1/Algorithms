@@ -60,6 +60,7 @@ export default class Snake extends Component {
               case 2:
                 x = mod(250, x + 10);
                 break;
+              default:
             }
             const newSnake = [{ x, y, direction }];
             const snakeLength = snake.length;
@@ -84,8 +85,8 @@ export default class Snake extends Component {
     const snake = this.state.snake;
     let x = Math.floor(Math.random() * 25) * 10;
     let y = Math.floor(Math.random() * 25) * 10;
-
-    while (snake.some(part => part.x === x && part.y === y)) {
+    const check = part => part.x === x && part.y === y;
+    while (snake.some(check)) {
       x = Math.floor(Math.random() * 25) * 10;
       y = Math.floor(Math.random() * 25) * 10;
     }
@@ -108,6 +109,7 @@ export default class Snake extends Component {
         case 2:
           x = mod(250, x - 10);
           break;
+        default:
       }
       return { snake: [...snake, { x, y, direction }], score: score + 1 };
     });
@@ -117,7 +119,7 @@ export default class Snake extends Component {
     let { x, y } = this.state.snake[0];
     let { x: fx, y: fy } = this.state.food;
 
-    if (x == fx && y == fy) {
+    if (x===fx && y===fy) {
       this.addPart();
       this.generateFood();
     }
@@ -144,11 +146,12 @@ export default class Snake extends Component {
       case "ArrowRight":
         direction = 2;
         break;
+      default:
     }
     if (
       direction &&
-      this.state.direction == this.state.snake[0].direction &&
-      this.state.direction != -direction
+      this.state.direction===this.state.snake[0].direction &&
+      this.state.direction !== -direction
     ) {
       this.setState({ direction });
     }
