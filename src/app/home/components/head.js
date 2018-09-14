@@ -6,10 +6,10 @@ export default class Head extends Component {
     return (
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Simple Algorithms - Learn, Visualize, Implement</title>
+        <title>Sketch Algorithms | Learn, Visualize, Implement</title>
         <meta
           name="description"
-          content="Simple Algorithms, a site to visualize, implement, learn and implement algorithms. Learn the basics to Design and Analysis of Algorithms. Compute Complexity, Easy Visualization, Algorithm Codes all in one place."
+          content="Sketch Algorithms, a site to visualize, implement, learn and implement algorithms. Learn the basics to Design and Analysis of Algorithms. Compute Complexity, Easy Visualization, Algorithm Codes all in one place."
         />
         <meta
           name="keyword"

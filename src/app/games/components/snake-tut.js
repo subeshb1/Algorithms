@@ -7,7 +7,7 @@ class Head extends Component {
     return (
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Snake Game - Tutorial</title>
+        <title>Snake Game | Tutorial | Sketch Algorithms</title>
         <meta
           name="description"
           content="Learn how to make a Simple Snake Games using several programming languages. Follow the step by step process to build your own Snake Game."
