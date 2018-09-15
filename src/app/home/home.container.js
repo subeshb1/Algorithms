@@ -4,7 +4,7 @@ import "./css/index.css";
 import { Head, Slide, Section,Features } from "./components";
 export default () => {
   return (
-    <div className="home-wrapper">
+    <div className="section-container">
       <Head />
       <Slide />
       <Section />

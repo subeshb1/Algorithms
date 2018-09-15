@@ -34,6 +34,13 @@ const headData = {
     title: "Heap Sort | Sketch Algorithms",
     keyword:
       "dijkstras  search, dijkstras, searching, algorithms, complexity, design and analysis of algorithm, dijkstras code, dijkstras algorithm search code, graph search, graph algorithms,c++,java,javascript,html,python,c,data structure"
+  },
+  home: {
+    description:
+      "Learn about different types of Graph Algorithms following different paradigms. Calculate Complexity, visualize, get programming code and implement it yourself. a star search, dijkstras search, dfs search,bfs search...",
+    title: "Graph Algorithms | Sketch Algorithms",
+    keyword:
+      "searching, search, a star search, dijkstras search, dfs search,bfs search"
   }
 };
 class Head extends React.Component {
@@ -73,10 +80,11 @@ let menuItems = links.map(item => ({
 }));
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
-  const algo = getAlgoFromPath(pathname.replace(path, ""));
+  const current = pathname.replace(path, "");
+  const algo = getAlgoFromPath(current);
   return (
     <div className="container">
-      <Head algo={algo} />
+      <Head algo={current ? algo : "home"} />
       <Menu className="menu" items={menuItems} />
       <IconBar />
       <DrawBoard algo={algo} />

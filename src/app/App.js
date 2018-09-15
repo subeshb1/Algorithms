@@ -34,16 +34,16 @@ class App extends Component {
             <NavItem as={NavLink} to="/" exact>
               Home
             </NavItem>
-            <NavItem as={NavLink} to="/sorting">
+            <NavItem as={NavLink} to="/sorting/">
               Sorting
             </NavItem>
-            <NavItem as={NavLink} to="/graph-search">
+            <NavItem as={NavLink} to="/graph-search/">
               Graph
             </NavItem>
-            <NavItem as={NavLink} to="/drawable-graph">
+            <NavItem as={NavLink} to="/drawable-graph/">
               Drawable Graph
             </NavItem>
-            <NavItem as={NavLink} to="/games">
+            <NavItem as={NavLink} to="/games/">
               Games
             </NavItem>
           </Navbar>

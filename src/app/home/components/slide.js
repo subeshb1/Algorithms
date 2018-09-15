@@ -75,41 +75,38 @@ export default class Slide extends Component {
               What Sketch Algorithms provide...
             </h2>
             <div className="cards">
-              <div className="card">
+              <a href="#interactive" className="card">
                 <div className="image">
-                  <img
-                    src={interactiveSVG}
-                    alt=""
-                  />
+                  <img src={interactiveSVG} alt="" />
                 </div>
                 <div className="description">
                   <div className="heading">Interactive PlayGround</div>
                 </div>
-              </div>
-              <div className="card">
+              </a>
+              <a href="#user-friendly" className="card">
                 <div className="image">
                   <img src={userFriendlySVG} alt="" />
                 </div>
                 <div className="description">
                   <div className="heading">User Friendly UI</div>
                 </div>
-              </div>
-              <div className="card">
+              </a>
+              <a href="#cross-platform" className="card">
                 <div className="image">
                   <img src={crossPlatformSVG} alt="" />
                 </div>
                 <div className="description">
                   <div className="heading">Cross Platform</div>
                 </div>
-              </div>
-              <div className="card">
+              </a>
+              <a href="#offline" className="card">
                 <div className="image">
                   <img src={offlineSVG} alt="" />
                 </div>
                 <div className="description">
                   <div className="heading">Offline Support</div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </Carousel.Slide>

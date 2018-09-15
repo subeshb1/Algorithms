@@ -90,3 +90,14 @@ a {
 h1 {
   text-align: center;
 }
+
+
+.section-container {
+  background-color: #fff;
+}
+
+.section-container .welcome {
+  position: relative;
+  top: 20px;
+  text-align: center;
+}

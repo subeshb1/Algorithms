@@ -41,6 +41,13 @@ const headData = {
     title: "Selection Sort | Sketch Algorithms",
     keyword:
       "selection sort,sorting, algorithms, complexity, design and analysis of algorithm, selection sort code, selection sorting, selection tree,c++,java,javascript,html,python,c,data structure"
+  },
+  home: {
+    description:
+      "Learn about different types of Sorting Algorithms following different paradigms. Calculate Complexity, visualize, get programming code and implement it yourself.",
+    title: "Sorting Algorithms | Sketch Algorithms",
+    keyword:
+      "sorting, sort, bubble sort, heap sort, merge sort,quick sort, selection sort"
   }
 };
 class Head extends React.Component {
@@ -93,11 +100,12 @@ let menuItems = links.map(item => ({
 }));
 
 const Sorting = ({ match: { path }, location: { pathname } }) => {
-  const algo = getAlgoFromPath(pathname.replace(path, ""));
+  const current = pathname.replace(path, "");
+  const algo = getAlgoFromPath(current);
   return (
     <React.Fragment>
       <div className="container">
-        <Head algo={algo} />
+        <Head algo={current ? algo : "home"} />
         <Menu className="menu" items={menuItems} />
         <DrawBoard />
         <ToolBar algo={algo} />

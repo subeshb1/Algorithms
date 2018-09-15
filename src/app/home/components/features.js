@@ -3,6 +3,7 @@ import interactive from "../../assets/svg/interactive.svg";
 import userFriendly from "../../assets/svg/user-friendly.svg";
 import crossPlatform from "../../assets/svg/cross-platform.svg";
 import offline from "../../assets/svg/offline.svg";
+
 export default class Features extends Component {
   render() {
     return (

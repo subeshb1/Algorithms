@@ -119,7 +119,7 @@ export default class Snake extends Component {
     let { x, y } = this.state.snake[0];
     let { x: fx, y: fy } = this.state.food;
 
-    if (x===fx && y===fy) {
+    if (x === fx && y === fy) {
       this.addPart();
       this.generateFood();
     }
@@ -150,7 +150,7 @@ export default class Snake extends Component {
     }
     if (
       direction &&
-      this.state.direction===this.state.snake[0].direction &&
+      this.state.direction === this.state.snake[0].direction &&
       this.state.direction !== -direction
     ) {
       this.setState({ direction });
@@ -188,7 +188,7 @@ export default class Snake extends Component {
             </text>
             <Food {...food} />
             {snake.reduceRight(
-              (acc, x, i) => [...acc, <Part {...x} pos={i} />],
+              (acc, x, i) => [...acc, <Part {...x} pos={i} key={i} />],
               []
             )}
             {gameover && (

@@ -2,12 +2,4 @@
 @import url("features.css");
 @import url("section.css");
 
-.home-wrapper {
-  background-color: #fff;
-}
 
-.home-wrapper .welcome {
-  position: relative;
-  top: 20px;
-  text-align: center;
-}
