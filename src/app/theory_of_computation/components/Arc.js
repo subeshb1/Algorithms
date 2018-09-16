@@ -15,8 +15,6 @@ const Arc = ({
   color,
   value
 }) => {
-  const dx = (x1 + x2) / 2;
-  const dy = (y1 + y2) / 2;
   const angle = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
   const distance = euclideanDistance(x1, x2, y1, y2);
 
