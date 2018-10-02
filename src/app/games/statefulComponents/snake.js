@@ -10,6 +10,20 @@ const Food = ({ x, y, pos }) => {
   return <rect x={x} rx={7} y={y} width="9" height="9" fill={"red"} />;
 };
 
+function getHighScore() {
+  try {
+    const highScore = parseInt(localStorage.getItem("snake-game"));
+    return isNaN(highScore) ? 0 : highScore;
+  } catch (e) {
+    return 0;
+  }
+}
+function setHighScore(highScore) {
+  try {
+    highScore = JSON.stringify(highScore);
+    localStorage.setItem("snake-game", highScore);
+  } catch (e) {}
+}
 export default class Snake extends Component {
   state = {
     direction: 2,
@@ -22,6 +36,7 @@ export default class Snake extends Component {
     food: { x: 0, y: 0 },
     score: 0
   };
+
   init = () => {
     this.setState({
       direction: 2,
@@ -38,11 +53,16 @@ export default class Snake extends Component {
 
     var start = 0;
     const draw = timestamp => {
+      if (this.unmount) return;
       start++;
       if (timestamp - start > 1000 / 10) {
         this.setState(
-          ({ direction, snake }) => {
+          ({ direction, snake, highScore, score }) => {
             if (this.checkGameOver()) {
+              if (score > highScore) {
+                setHighScore(score)
+                return { gameover: true, highScore: score };
+              }
               return { gameover: true };
             }
             let x = snake[0].x;
@@ -157,19 +177,22 @@ export default class Snake extends Component {
     }
   }
   componentDidMount = () => {
-    this.keyListener = window.addEventListener("keydown", event => {
+    this.unmount = false;
+    this.setState({ highScore: getHighScore() });
+    this.keyListener = event => {
       if (/Arrow/gi.test(event.key) && !this.state.gameover) {
         event.preventDefault();
         this.setDirection(event.key);
       }
-    });
+    };
+    window.addEventListener("keydown", this.keyListener);
   };
   componentWillUnmount() {
     this.unmount = true;
     window.removeEventListener("keydown", this.keyListener);
   }
   render() {
-    const { snake, food, score, gameover } = this.state;
+    const { snake, food, score, gameover, highScore } = this.state;
     return (
       <React.Fragment>
         <div className="drawboard" style={{ background: "#6a79af" }}>
@@ -185,6 +208,9 @@ export default class Snake extends Component {
             />
             <text fontSize={10} x={0} y={-1}>
               Score: {score}
+            </text>
+            <text fontSize={10} x={185} y={-1}>
+              HighScore: {highScore}
             </text>
             <Food {...food} />
             {snake.reduceRight(

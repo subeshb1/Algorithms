@@ -1,7 +1,4 @@
-body {
-  display: grid;
-  grid-template-rows: min-content auto min-content;
-}
+
 
 :root {
   --theme-background: #2b698d;
@@ -18,6 +15,7 @@ body {
   background-color: var(--theme-background);
   position: relative;
   box-shadow: 0 0 6px 2px #929292;
+  overflow: hidden;
 }
 
 .navbar > .item {
