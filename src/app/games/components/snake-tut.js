@@ -1,40 +1,34 @@
 import React, { Component } from "react";
-import { Snippet } from "../../components";
-import { Helmet } from "react-helmet";
+import { Snippet, Head } from "../../components";
 
-class Head extends Component {
-  render() {
-    return (
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>Snake Game | Tutorial | Sketch Algorithms</title>
-        <meta
-          name="description"
-          content="Learn how to make a Simple Snake Games using several programming languages. Follow the step by step process to build your own Snake Game."
-        />
-        <meta
-          name="keyword"
-          content="snake game using js, snake game using c++, snake game using java, snake game tutorial, tutorial, learn simple, easy, free tutorial"
-        />
-      </Helmet>
-    );
-  }
-}
+const data = {
+  description:
+    "Learn how to make a Simple Snake Games using several programming languages. Follow the step by step process to build your own Snake Game.",
+  title: "Snake Game | Tutorial | Sketch Algorithms",
+  url: "/games/snake-game",
+  image: "snake-game.svg"
+};
 
 export default class SnakeTut extends Component {
   render() {
     return (
       <div>
-        <Head />
+        <Head data={data} />
         <article className="section" id="tutorial">
           <h1>Snake Game</h1>
           <section>
             <h2 id="tldr">TL;DR</h2>
             <p>
-              Live Demo with code <a href="https://codepen.io/subeshb1/pen/KGdJyq"  target="_blank"
-                  rel="noopener noreferrer">Here</a>. Source Code only{" "}
-              <a href="#code">Here</a>. Tutorial describing the code is{" "}
-              <a href="#introduction">below.</a>
+              Live Demo with code{" "}
+              <a
+                href="https://codepen.io/subeshb1/pen/KGdJyq"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Here
+              </a>
+              . Source Code only <a href="#code">Here</a>. Tutorial describing
+              the code is <a href="#introduction">below.</a>
             </p>
           </section>
           <section>
@@ -612,8 +606,14 @@ function, but make sure it's height and width are 10px*/</span>
               Use your new found Knowledge to make something beautiful and share
               among friends and with us too. The full source code will be down
               below an you can get the working example with code{" "}
-              <a href="https://codepen.io/subeshb1/pen/KGdJyq"  target="_blank"
-                  rel="noopener noreferrer">Here</a>.
+              <a
+                href="https://codepen.io/subeshb1/pen/KGdJyq"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Here
+              </a>
+              .
             </p>
           </section>
 

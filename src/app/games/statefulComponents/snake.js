@@ -12,7 +12,7 @@ const Food = ({ x, y, pos }) => {
 
 function getHighScore() {
   try {
-    const highScore = parseInt(localStorage.getItem("snake-game"));
+    const highScore = parseInt(localStorage.getItem("snake-game"),10);
     return isNaN(highScore) ? 0 : highScore;
   } catch (e) {
     return 0;
