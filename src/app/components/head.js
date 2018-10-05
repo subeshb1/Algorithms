@@ -33,7 +33,7 @@ export default class Head extends React.Component {
         />
         <meta
           property="og:image"
-          content={"https://www.sketchalgorithms.com/img/og-image/" + image}
+          content={"https://www.sketchalgorithms.com/static/img/og-image/" + image}
         />
         {/* Twitter */}
         <meta name="twitter:card" content={"summary"} />
@@ -44,7 +44,7 @@ export default class Head extends React.Component {
         />
         <meta
           name="twitter:image"
-          content={"https://www.sketchalgorithms.com/img/og-image/" + image}
+          content={"https://www.sketchalgorithms.com/static/img/og-image/" + image}
         />
         <meta name="twitter:description" content={ogDescription} />
       </Helmet>
