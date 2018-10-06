@@ -69,16 +69,6 @@
   /* height: 100vh; */
 }
 
-/* FOOTER */
-#footer {
-  min-height: 20vh;
-  background: var(--theme-background);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
-}
 
 a {
   text-decoration: none;

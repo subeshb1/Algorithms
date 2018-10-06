@@ -3,7 +3,14 @@ import "./css/index.css";
 import { Menu, Head } from "../components";
 import { Snake } from "./statefulComponents";
 import { Route } from "react-router-dom";
+// import Loadable from "react-loadable";
 import SnakeTut from "./components/snake-tut";
+// const SnakeTut = Loadable({
+//   loader: () => import("./components/snake-tut"),
+//   loading: () => <div>Loading...</div>,
+//   delay: 0
+// });
+
 const links = ["/snake-game"];
 
 const getAlgoFromPath = pathname => {
@@ -39,6 +46,7 @@ export default class Games extends Component {
           <Menu className="menu" items={menuItems} />
           <Route path="/games/snake-game" component={Snake} />
         </div>
+
         <div className="section-container">
           <Route path="/games/snake-game" component={SnakeTut} />
         </div>

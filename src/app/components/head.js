@@ -15,6 +15,7 @@ export default class Head extends React.Component {
         image = "logo.png"
       }
     } = this.props;
+    const img = images[image] || images["logo.png"];
     return (
       <Helmet>
         {/* Facebook */}
@@ -25,12 +26,12 @@ export default class Head extends React.Component {
           property="og:description"
           content={ogDescription || description}
         />
-        <meta property="og:image" content={root + images[image]} />
+        <meta property="og:image" content={root + img} />
         {/* Twitter */}
         <meta name="twitter:card" content={"summary"} />
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:url" content={root + url} />
-        <meta name="twitter:image" content={root + images[image]} />
+        <meta name="twitter:image" content={root + img} />
         <meta name="twitter:description" content={ogDescription} />
         <meta charSet="utf-8" />
         {/* SEO */}

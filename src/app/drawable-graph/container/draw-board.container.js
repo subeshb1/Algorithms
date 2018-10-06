@@ -22,7 +22,7 @@ const DrawBoard = props => {
     <div className="drawboard draw-drawboard">
       <style>
         {`
-            svg{
+            .drawboard svg{
               -webkit-user-select: none; /* webkit (safari, chrome) browsers */
               -moz-user-select: none; /* mozilla browsers */
               -khtml-user-select: none; /* webkit (konqueror) browsers */
@@ -31,46 +31,46 @@ const DrawBoard = props => {
               cursor: ${mode === 1 ? "crosshair" : ""}
             }
           
-            circle,line {
+            .drawboard circle,line {
             stroke:grey;
             fill:white;
             stroke-width: 2px;
             cursor: ${mode === 0 ? "move" : mode === 2 ? "pointer" : ""}
             }
 
-            line.PATH{
+            .drawboard line.PATH{
               stroke:#00a25d;
               stroke-width:4px;
             }
-            circle.UNVISITED {
+            .drawboard circle.UNVISITED {
               fill: white;
             }
-            circle.VISITED {
+            .drawboard circle.VISITED {
               fill:  ${loading ? "white" : "#dbefff"};
             }
-            circle.EXPLORED {
+            .drawboard circle.EXPLORED {
               fill:  ${loading ? "white" : "#00b3ca"};
             }
-            circle.PATH {
+            .drawboard circle.PATH {
               fill:  ${loading ? "white" : "#50f5ae"};
             }
-            circle.BLOCK {
+            .drawboard circle.BLOCK {
               fill:  ${loading ? "white" : "#c1c1c1"};
             }
-            svg text {
+            .drawboard svg text {
               -webkit-user-select: none;
                  -moz-user-select: none;
                   -ms-user-select: none;
                       user-select: none;
           }
-          svg text::selection {
+          .drawboard svg text::selection {
               background: none;
           }
-          text {
+          .drawboard text {
             position: relative;
             z-index:1 ;
           }
-          .selected {
+          .drawboard .selected {
             animation: strokeAnim 0.5s infinite linear;
             stroke-dasharray: 5 4;
           }
@@ -79,7 +79,7 @@ const DrawBoard = props => {
               stroke-dashoffset: -9px;
             }
           }
-          .temp {
+          .drawboard .temp {
             stroke-dasharray: 5;
           }
 

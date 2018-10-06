@@ -6,7 +6,7 @@ const data = {
     "Learn how to make a Simple Snake Games using several programming languages. Follow the step by step process to build your own Snake Game.",
   title: "Snake Game | Tutorial | Sketch Algorithms",
   url: "/games/snake-game",
-  image: "snake-game.svg"
+  image: "snake-game.png"
 };
 
 export default class SnakeTut extends Component {

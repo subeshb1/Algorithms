@@ -1,6 +1,8 @@
-.section,p {
-  font-family: 'Poppins', sans-serif;
+.section,
+p {
+  font-family: "Poppins", sans-serif;
   line-height: 1.6;
+  word-break: break-word;
 }
 .section p img {
   float: left;
@@ -23,7 +25,7 @@ article {
 }
 
 .section .list {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin: 10px 0;
   counter-reset: list;
 }
@@ -33,17 +35,16 @@ article {
 }
 
 .section .list .item::before {
-    counter-increment: list;
+  counter-increment: list;
 
-    content: counter(list) ".  ";
-
+  content: counter(list) ".  ";
 }
 .section a {
-    font-family: inherit;
-    text-decoration: underline;
-    color: #0074ad;
+  font-family: inherit;
+  text-decoration: underline;
+  color: #0074ad;
 }
 
 .section section {
-    margin: 20px 0;
+  margin: 20px 0;
 }

@@ -4,9 +4,12 @@ import "./App.css";
 import "./css/index.css";
 import { createComponent, createPortal } from "./lib";
 import { Sorting, DrawableGraph, Graph, Home, Games, TOC } from "./containers";
-
+import { Footer, ShareBar } from "./universal-components";
 const Header = createPortal(document.getElementById("header"), "Header");
-const Footer = createPortal(document.getElementById("footer"), "Footer");
+const FooterPortal = createPortal(
+  document.getElementById("footer"),
+  "FooterPortal"
+);
 const Navbar = createComponent("nav", { className: "navbar" });
 const NavItem = createComponent("div", { className: "item" });
 
@@ -51,6 +54,7 @@ class App extends Component {
             </NavItem>
           </Navbar>
         </Header>
+        <ShareBar />
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/sorting" component={Sorting} />
@@ -60,7 +64,9 @@ class App extends Component {
           <Route path="/toc" component={TOC} />
           <Route component={NoContent} />
         </Switch>
-        <Footer>&copy;Copyright Subesh Bhandari</Footer>
+        <FooterPortal>
+          <Footer />
+        </FooterPortal>
       </React.Fragment>
     );
   }

@@ -11,6 +11,8 @@ import heap from "./heap.PNG";
 import bubble from "./bubble.PNG";
 import quick from "./quick.PNG";
 import logo from "./logo.png";
+import snakeGrid from "./snake-grid.png";
+import snakeGame from "./snake-game.png";
 
 export {
   aStar,
@@ -25,7 +27,8 @@ export {
   heap,
   bubble,
   quick,
-  logo
+  logo,
+  snakeGrid
 };
 
 export const images = {
@@ -41,5 +44,7 @@ export const images = {
   "heap.PNG": heap,
   "bubble.PNG": bubble,
   "quick.PNG": quick,
-  "logo.png": logo
+  "logo.png": logo,
+  "snake-grid.png": snakeGrid,
+  "snake-game.png": snakeGame
 };
