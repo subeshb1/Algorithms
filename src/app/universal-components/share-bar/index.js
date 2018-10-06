@@ -153,29 +153,37 @@ export default withRouter(
       const {
         location: { pathname }
       } = this.props;
+      const shouldRender = Boolean(
+        document.querySelector('[property="og:image"]') &&
+          document.querySelector('[property="og:title"]') &&
+          document.querySelector('[property="og:description"]')
+      );
       return (
-        <div className="share-bar">
-          {display && (
-            <div className="socials">
-              {social.map((x, i) => {
-                const name = x.name;
-                const Icon = socialComponents[name + "Icon"];
-                const Button = socialComponents[name + "ShareButton"];
-                return (
-                  <div
-                    title={"Share on " + name}
-                    key={i}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Button url={root + pathname} {...x.getProps()}>
-                      <Icon size={32} round={true} />
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        (shouldRender && (
+          <div className="share-bar">
+            {display && (
+              <div className="socials">
+                {social.map((x, i) => {
+                  const name = x.name;
+                  const Icon = socialComponents[name + "Icon"];
+                  const Button = socialComponents[name + "ShareButton"];
+                  return (
+                    <div
+                      title={"Share on " + name}
+                      key={i}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Button url={root + pathname} {...x.getProps()}>
+                        <Icon size={32} round={true} />
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )) ||
+        null
       );
     }
   }
